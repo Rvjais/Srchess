@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SRChess — Master the Game</title>
+    <meta name="description" content="SRChess — The ultimate platform for chess enthusiasts. Play, learn, and compete with players worldwide." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+
+    <!-- Grid Trail Background -->
+    <div id="grid-trail-container"></div>
+
+    <!-- Fixed 3D Canvas -->
+    <canvas id="webgl"></canvas>
+
+    <!-- ── Navbar ──────────────────────────────────────────────────────────── -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo">SR<span>CA</span></a>
+
+        <ul class="nav-links">
+          <li class="dropdown">
+            <a href="#">Academy <i class="fas fa-chevron-down nav-chevron"></i></a>
+            <ul class="dropdown-content">
+              <li><a href="https://srchessacademy.com/about">About us</a></li>
+              <li><a href="https://srchessacademy.com/coaches">Coaches</a></li>
+              <li><a href="https://srchessacademy.com/testimonials">Testimonials</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#">Services <i class="fas fa-chevron-down nav-chevron"></i></a>
+            <ul class="dropdown-content">
+              <li><a href="https://srchessacademy.com/coaching">Coaching</a></li>
+              <li><a href="https://srchessacademy.com/chess-consultation">Chess Consultation</a></li>
+              <li><a href="https://srchessacademy.com/workshops">Corporate Workshops</a></li>
+              <li><a href="https://srchessacademy.com/social-media-management">Chess Climb Media</a></li>
+            </ul>
+          </li>
+          <li><a href="https://srchessacademy.com/chess-coffee-connect">Coffee Connect</a></li>
+          <li><a href="https://srchessacademy.com/blog">Blog</a></li>
+          <li><a href="https://srchessacademy.com/gallery">Gallery</a></li>
+          <li><a href="https://srchessacademy.com/buy_chess_merchandise">Shop</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <a href="https://srchessacademy.com/cart" class="nav-cart"><i class="fas fa-shopping-cart"></i> <span class="cart-count">0</span></a>
+          <a href="https://srchessacademy.com/signin" class="nav-btn">Login</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── Section 1: Hero (Phase 1 — board) ──────────────────────────────── -->
+    <section class="section section-hero">
+      <div class="hero-content">
+        <div class="hero-badge">♟ Where Champions Are Born</div>
+        <h1 class="hero-title">
+          Master the <br>
+          <span class="gradient-text">Art of Chess.</span>
+        </h1>
+        <p class="hero-sub">At Shivika Rohilla Chess Academy, we nurture young minds to think strategically, act decisively, and compete confidently.</p>
+        <div class="hero-actions">
+          <a href="/signup" class="btn-primary">Get Started</a>
+        </div>
+      </div>
+      <div class="scroll-hint">
+        <span>Scroll to explore</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- ── Section 2: Strategy (Phase 2 — King on left) ──────────────────── -->
+    <section class="section section-strategy">
+      <div class="content-right sticky-content">
+        <div class="glass-card card-purple">
+          <span class="card-tag">DREAM MOVE INITIATIVE</span>
+          <h2 class="card-title">Opening the chessboard to every <span class="gradient-text">talent.</span></h2>
+          <p class="card-body">Supporting blind champions, senior minds & young girls in chess. We believe that chess is a universal language that transcends all barriers. Our Dream Move Initiative provides dedicated resources, specialized coaching, and financial support to ensure that every passionate player has the opportunity to master the game, regardless of their background or physical abilities.</p>
+
+          <ul class="features-list">
+            <li>
+              <span class="feat-icon">🎓</span>
+              <div>
+                <strong><a href="https://docs.google.com/spreadsheets/d/1O5iU5IOBoQHZ0QNfIKBq6xMzU5MlYeBXO70bcsyvT1s/edit?gid=0#gid=0" target="_blank" style="color: inherit; text-decoration: none;">Download Certificates</a></strong>
+              </div>
+            </li>
+            <li>
+              <span class="feat-icon">📷</span>
+              <div>
+                <strong><a href="https://docs.google.com/spreadsheets/d/1Y7oHirDt_kffeIpl6U5MMgfquKjUfusIY7CX-gOkN0E/edit?gid=0#gid=0" target="_blank" style="color: inherit; text-decoration: none;">View Tournament Photos & Videos</a></strong>
+              </div>
+            </li>
+            <li>
+              <span class="feat-icon">📅</span>
+              <div>
+                <strong><a href="https://srchessacademy.com/chess-coffee-connect" target="_blank" style="color: inherit; text-decoration: none;">View Upcoming Events</a></strong>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 3: Command (Phase 3 — Queen on right) ─────────────────── -->
+    <section class="section section-queen">
+      <div class="content-left sticky-content">
+        <div class="glass-card card-blue">
+          <span class="card-tag">EMPOWER SUCCESS</span>
+          <h2 class="card-title">Inspire <span class="gradient-text">Strength</span></h2>
+          <p class="card-body">Build mental toughness with our expert sports psychologist. Outsmart, Checkmate, and Win Big with our monthly Chess Trivia. Chess is not just about the moves on the board; it's a battle of the mind. Our comprehensive psychological training programs help players develop unbreakable focus, emotional resilience, and the strategic foresight required to dominate high-pressure tournaments.</p>
+
+          <ul class="features-list">
+            <li>
+              <span class="feat-icon">🧠</span>
+              <div>
+                <strong>Stress Test</strong>
+                <p><a href="https://srchessacademy.com/stress_test_parents" style="color:var(--gold);">For Parents</a> &nbsp;•&nbsp; <a href="https://srchessacademy.com/stress_test_children" style="color:var(--gold);">For Children</a></p>
+              </div>
+            </li>
+            <li>
+              <span class="feat-icon">🧩</span>
+              <div>
+                <strong>Chess Trivia</strong>
+                <p>Solve trivia, score discounts! <a href="https://srchessacademy.com/signin?page=chess_trivia" style="color:var(--gold); font-weight: 600;">Play Now</a></p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Glassmorphic Social Media Sidebar ──────────────────────────────── -->
+    <div class="social-sidebar">
+      <a href="https://www.facebook.com/profile.php?id=61559885038853" target="_blank"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://x.com/ChessShivi46473?t=T63X2qFgay2WqroAs7amsw&s=09" target="_blank"><i class="fab fa-x-twitter"></i></a>
+      <a href="https://www.instagram.com/srca_chess_academy/" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.linkedin.com/company/sr-chess-academy/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+      <a href="https://youtu.be/39wamHswcB8" target="_blank"><i class="fab fa-youtube"></i></a>
+      <a href="https://api.whatsapp.com/send?phone=917042854007" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    </div>
+
+    <!-- ── Marquee Quotes ────────────────────────────────────────────────── -->
+    <div class="marquee-container">
+      <div class="marquee">
+        <span>"Every chess master was once a beginner." – Irving Chernev &nbsp; | &nbsp; "Chess is the gymnasium of the mind." – Blaise Pascal &nbsp; | &nbsp; "In chess, as in life, opportunity strikes but once." – David Bronstein &nbsp; | &nbsp; "The beauty of a move lies not in its appearance but in the thought behind it." – A. T. Fomenko &nbsp; | &nbsp; "Chess is a game of patience and strategy." &nbsp; | &nbsp; "A good player knows all the rules, a great player knows how to break them." &nbsp; | &nbsp; "Chess is life in miniature. Chess is a struggle." – Garry Kasparov &nbsp; | &nbsp; "You can't play chess without losing pawns." – James Mateson &nbsp; | &nbsp; "The hardest game to win is a won game." – Emanuel Lasker &nbsp; | &nbsp; "A pawn that reaches the eighth rank is a queen."</span>
+      </div>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
