@@ -505,10 +505,15 @@ const tick = () => {
 
   if (king) {
     king.visible = true;
-    const targetKingX = -35 + (p2Enter - p2Exit) * (35 + KING_REST_X);
+    // Base target position with mouse parallax offset
+    const targetKingX = -35 + (p2Enter - p2Exit) * (35 + KING_REST_X) + (mouse.x * 1.5);
     currentKingX += (targetKingX - currentKingX) * 0.06;
     king.position.x = currentKingX;
-    king.position.y = Math.sin(elapsed * 1.5) * 0.08 - 2;
+    king.position.y = (Math.sin(elapsed * 1.5) * 0.08 - 2) + (mouse.y * 0.5);
+
+    // Interactive rotation (look at mouse)
+    king.rotation.y += (mouse.x * 1.2 - king.rotation.y) * 0.1;
+    king.rotation.x += (-mouse.y * 0.5 - king.rotation.x) * 0.1;
 
     // Camera reset toward neutral as pieces enter
     if (p2Enter > 0) {
@@ -528,10 +533,15 @@ const tick = () => {
 
   if (queen) {
     queen.visible = true;
-    const targetQueenX = 35 - (p3Enter - p3Exit) * (35 - QUEEN_REST_X);
+    // Base target position with mouse parallax offset
+    const targetQueenX = 35 - (p3Enter - p3Exit) * (35 - QUEEN_REST_X) + (mouse.x * 1.5);
     currentQueenX += (targetQueenX - currentQueenX) * 0.06;
     queen.position.x = currentQueenX;
-    queen.position.y = Math.sin(elapsed * 1.5 + Math.PI) * 0.08 - 2;
+    queen.position.y = (Math.sin(elapsed * 1.5 + Math.PI) * 0.08 - 2) + (mouse.y * 0.5);
+
+    // Interactive rotation (look at mouse)
+    queen.rotation.y += (mouse.x * 1.2 - queen.rotation.y) * 0.1;
+    queen.rotation.x += (-mouse.y * 0.5 - queen.rotation.x) * 0.1;
   }
 
   rendererBoard.render(sceneBoard, camera);
