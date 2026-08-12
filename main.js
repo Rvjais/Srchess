@@ -1,18 +1,18 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OBJLoader }  from 'three/examples/jsm/loaders/OBJLoader.js';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 
 // ─── Grid Trail Background ───────────────────────────────────────────────────
 const gridContainer = document.getElementById('grid-trail-container');
 if (gridContainer) {
   const createGrid = () => {
     gridContainer.innerHTML = '';
-    const tileSize = Math.max(window.innerWidth / 24, 60); // approx 24 columns, min 60px
+    const tileSize = Math.max(window.innerWidth / 50, 15); // approx 36 columns, min 45px
     const cols = Math.ceil(window.innerWidth / tileSize);
     const rows = Math.ceil(window.innerHeight / tileSize);
     gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-    
+
     for (let i = 0; i < cols * rows; i++) {
       const tile = document.createElement('div');
       tile.classList.add('grid-tile');
@@ -35,8 +35,11 @@ if (gridContainer) {
 }
 
 // ─── Scene ───────────────────────────────────────────────────────────────────
-const canvas = document.querySelector('#webgl');
-const scene  = new THREE.Scene();
+// ─── Scene ───────────────────────────────────────────────────────────────────
+const canvasBoard = document.querySelector('#webgl-board');
+const canvasPieces = document.querySelector('#webgl-pieces');
+const sceneBoard = new THREE.Scene();
+const scenePieces = new THREE.Scene();
 
 // ─── Camera ──────────────────────────────────────────────────────────────────
 const sizes = { width: window.innerWidth, height: window.innerHeight };
@@ -44,33 +47,40 @@ const sizes = { width: window.innerWidth, height: window.innerHeight };
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 200);
 camera.position.set(0, 6, 22);
 camera.lookAt(0, 0, 0);
-scene.add(camera);
+sceneBoard.add(camera);
+scenePieces.add(camera);
 
 // ─── Renderer ────────────────────────────────────────────────────────────────
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-renderer.setSize(sizes.width, sizes.height);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.outputColorSpace = THREE.SRGBColorSpace;
+const rendererBoard = new THREE.WebGLRenderer({ canvas: canvasBoard, alpha: true, antialias: true });
+rendererBoard.setSize(sizes.width, sizes.height);
+rendererBoard.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+rendererBoard.outputColorSpace = THREE.SRGBColorSpace;
+
+const rendererPieces = new THREE.WebGLRenderer({ canvas: canvasPieces, alpha: true, antialias: true });
+rendererPieces.setSize(sizes.width, sizes.height);
+rendererPieces.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+rendererPieces.outputColorSpace = THREE.SRGBColorSpace;
 
 // ─── Lighting ────────────────────────────────────────────────────────────────
-scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-
-const keyLight = new THREE.DirectionalLight(0xfff5e0, 2.5);
-keyLight.position.set(5, 15, 10);
-scene.add(keyLight);
-
-const rimLight = new THREE.PointLight(0x7c3aed, 80);
-rimLight.position.set(-8, 8, -12);
-scene.add(rimLight);
-
-const fillLight = new THREE.PointLight(0xffffff, 40);
-fillLight.position.set(0, -10, 5);
-scene.add(fillLight);
+const setupLighting = (s) => {
+  s.add(new THREE.AmbientLight(0xffffff, 0.9));
+  const keyLight = new THREE.DirectionalLight(0xfff5e0, 2.5);
+  keyLight.position.set(5, 15, 10);
+  s.add(keyLight);
+  const rimLight = new THREE.PointLight(0xfcd739, 80);
+  rimLight.position.set(-8, 8, -12);
+  s.add(rimLight);
+  const fillLight = new THREE.PointLight(0xffffff, 40);
+  fillLight.position.set(0, -10, 5);
+  s.add(fillLight);
+};
+setupLighting(sceneBoard);
+setupLighting(scenePieces);
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const textureLoader = new THREE.TextureLoader();
-const objLoader     = new OBJLoader();
-const gltfLoader    = new GLTFLoader();
+const objLoader = new OBJLoader();
+const gltfLoader = new GLTFLoader();
 
 function loadOBJ(objUrl, texUrl, targetHeightUnits, startX, callback) {
   const tex = textureLoader.load(texUrl);
@@ -88,9 +98,9 @@ function loadOBJ(objUrl, texUrl, targetHeightUnits, startX, callback) {
 
     // Auto-scale to desired height
     obj.scale.set(1, 1, 1);
-    const box    = new THREE.Box3().setFromObject(obj);
+    const box = new THREE.Box3().setFromObject(obj);
     const modelH = box.getSize(new THREE.Vector3()).z;
-    const s      = targetHeightUnits / (modelH || 1);
+    const s = targetHeightUnits / (modelH || 1);
     obj.scale.set(s, s, s);
 
     // Re-center on X/Z
@@ -102,7 +112,7 @@ function loadOBJ(objUrl, texUrl, targetHeightUnits, startX, callback) {
     pivot.add(obj);
     pivot.position.set(startX, -2, 0);
     pivot.visible = false;
-    scene.add(pivot);
+    scenePieces.add(pivot);
     callback(pivot);
   }, undefined, (err) => console.error('OBJ error:', err));
 }
@@ -116,11 +126,11 @@ let moveTimer = 2.0;
 let validSquares = [];
 
 gltfLoader.load('/ChessScene.glb', (gltf) => {
-  const obj    = gltf.scene;
-  const box    = new THREE.Box3().setFromObject(obj);
-  const size   = box.getSize(new THREE.Vector3());
+  const obj = gltf.scene;
+  const box = new THREE.Box3().setFromObject(obj);
+  const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
-  const scale  = 13 / (Math.max(size.x, size.y, size.z) || 1);
+  const scale = 13 / (Math.max(size.x, size.y, size.z) || 1);
   obj.scale.setScalar(scale);
   obj.position.sub(center.multiplyScalar(scale));
   obj.traverse((child) => {
@@ -129,7 +139,7 @@ gltfLoader.load('/ChessScene.glb', (gltf) => {
       const childBox = child.geometry.boundingBox;
       const childSize = childBox.getSize(new THREE.Vector3());
       const maxDim = Math.max(childSize.x, childSize.y, childSize.z);
-      if (maxDim < size.x * 0.5) { 
+      if (maxDim < size.x * 0.5) {
         playablePieces.push(child);
       }
     }
@@ -169,13 +179,13 @@ gltfLoader.load('/ChessScene.glb', (gltf) => {
       col = Math.max(0, Math.min(7, col));
       row = Math.max(0, Math.min(7, row));
       const idx = row * 8 + col;
-      
+
       // Snap exact position
       p.position.x = validSquares[idx].x;
       p.position.z = validSquares[idx].z;
       p.userData.initialPos = p.position.clone();
       p.userData.squareIdx = idx;
-      
+
       validSquares[idx].occupant = p;
     }
   }
@@ -183,20 +193,37 @@ gltfLoader.load('/ChessScene.glb', (gltf) => {
   // Add Reset Button
   const resetBtn = document.createElement('button');
   resetBtn.innerText = "Reset Board View";
-  resetBtn.style.position = 'fixed';
-  resetBtn.style.bottom = '30px';
+  resetBtn.style.position = 'absolute';
+  resetBtn.style.bottom = '40px'; // Sit just above the curve
   resetBtn.style.left = '50%';
   resetBtn.style.transform = 'translateX(-50%)';
-  resetBtn.style.zIndex = '1000';
+  resetBtn.style.zIndex = '10'; // Above the grid
   resetBtn.style.padding = '12px 24px';
-  resetBtn.style.backgroundColor = '#4D6787';
-  resetBtn.style.color = '#fff';
+  resetBtn.style.backgroundColor = 'var(--gold, #fcd739)'; // Match the new theme
+  resetBtn.style.color = '#111';
   resetBtn.style.border = 'none';
   resetBtn.style.borderRadius = '30px';
   resetBtn.style.cursor = 'pointer';
-  resetBtn.style.fontWeight = 'bold';
-  resetBtn.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-  document.body.appendChild(resetBtn);
+  resetBtn.style.pointerEvents = 'auto'; // Ensure it can be clicked despite parent pointer-events: none
+  resetBtn.style.fontWeight = '700';
+  resetBtn.style.boxShadow = '0 4px 14px rgba(212, 175, 55, 0.3)';
+
+  // Hover effect for the button
+  resetBtn.addEventListener('mouseenter', () => {
+    resetBtn.style.transform = 'translateX(-50%) translateY(-2px)';
+    resetBtn.style.boxShadow = '0 6px 18px rgba(212, 175, 55, 0.5)';
+  });
+  resetBtn.addEventListener('mouseleave', () => {
+    resetBtn.style.transform = 'translateX(-50%)';
+    resetBtn.style.boxShadow = '0 4px 14px rgba(212, 175, 55, 0.3)';
+  });
+
+  const heroWrapper = document.querySelector('.hero-content-wrapper');
+  if (heroWrapper) {
+    heroWrapper.appendChild(resetBtn);
+  } else {
+    document.body.appendChild(resetBtn);
+  }
 
   resetBtn.addEventListener('click', () => {
     manualRotY = 0;
@@ -212,9 +239,10 @@ gltfLoader.load('/ChessScene.glb', (gltf) => {
     moveTimer = 1.0;
   });
 
-  board = new THREE.Group();
-  board.add(obj);
-  scene.add(board);
+  // Adjust board baseline vertically
+  obj.position.y -= 1.0;
+  board = obj;
+  sceneBoard.add(obj);
 }, undefined, (err) => console.error('Board GLB error:', err));
 
 // ─── Scripted Italian Game Sequence ──────────────────────────────────────────
@@ -253,18 +281,38 @@ loadOBJ(
 // ─── Scroll ───────────────────────────────────────────────────────────────────
 let scrollProgress = 0;
 window.addEventListener('scroll', () => {
-  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  scrollProgress  = Math.min(window.scrollY / maxScroll, 1);
+  // Calculate hero scroll progress (0 to 1) for board animation
+  scrollProgress = Math.min(window.scrollY / window.innerHeight, 1);
+
+  // Navbar Pill logic
+  const navbar = document.getElementById('navbar');
+  if (navbar) {
+    if (window.scrollY > 50) {
+      navbar.classList.add('expanded');
+    } else {
+      navbar.classList.remove('expanded');
+    }
+  }
+
+  // Fade out the grid background when scrolling past hero
+  const gridElement = document.querySelector('#grid-trail-container');
+  if (window.scrollY > window.innerHeight * 0.5) {
+    const overflow = window.scrollY - (window.innerHeight * 0.5);
+    const fadeOut = Math.max(0, 1 - (overflow / (window.innerHeight * 0.3)));
+    if (gridElement) gridElement.style.opacity = fadeOut;
+  } else {
+    if (gridElement) gridElement.style.opacity = 1;
+  }
 });
 
 // ─── Resize ───────────────────────────────────────────────────────────────────
 window.addEventListener('resize', () => {
-  sizes.width  = window.innerWidth;
+  sizes.width = window.innerWidth;
   sizes.height = window.innerHeight;
   camera.aspect = sizes.width / sizes.height;
   camera.updateProjectionMatrix();
-  renderer.setSize(sizes.width, sizes.height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  rendererBoard.setSize(sizes.width, sizes.height);
+  rendererPieces.setSize(sizes.width, sizes.height);
 });
 
 // ─── Raycaster & Interaction ──────────────────────────────────────────────────
@@ -282,7 +330,8 @@ window.addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  if (isDragging && scrollProgress < 0.15) {
+  // Only allow dragging if we are in the hero section
+  if (isDragging && window.scrollY < window.innerHeight) {
     const deltaMove = {
       x: event.clientX - previousMousePosition.x,
       y: event.clientY - previousMousePosition.y
@@ -299,15 +348,15 @@ window.addEventListener('mousemove', (event) => {
 //   Phase 2 (king):  scroll  0.3 → 0.65
 //   Phase 3 (queen): scroll  0.6 → 1.0
 
-let currentRotY   = 0;
+let currentRotY = 0;
 let currentBoardX = 8;
-let currentCamZ   = 22;
-let currentCamY   = 6;
-let currentKingX  = -35;
+let currentCamZ = 22;
+let currentCamY = 6;
+let currentKingX = -35;
 let currentQueenX = 35;
 
-const KING_REST_X  = -6; // Pulled back slightly from center
-const QUEEN_REST_X =  6;
+const KING_REST_X = -11; // Pushed further left to balance wider cards
+const QUEEN_REST_X = 9; // Pushed further right to balance wider cards
 
 // ─── Tick ─────────────────────────────────────────────────────────────────────
 const clock = new THREE.Clock();
@@ -320,22 +369,18 @@ const tick = () => {
   lastElapsed = elapsed;
 
   // ── Phase 1: Board ────────────────────────────────────────────────────────
-  const p1 = Math.min(scrollProgress / 0.3, 1);
-
   if (board) {
-    if (scrollProgress < 0.15) {
-      autoSpinY += delta * 0.15; // Slow circular motion
-    }
-    
-    const targetRotY   = p1 * Math.PI * 2 + manualRotY + autoSpinY;
-    const targetBoardX = 8 - p1 * 53;
-    const targetCamZ   = 22 - p1 * 16;
-    const targetCamY   =  6 - p1 *  3;
+    autoSpinY += delta * 0.15; // Slow circular motion
 
-    currentRotY   += (targetRotY   - currentRotY)   * 0.06;
+    const targetRotY = scrollProgress * Math.PI + manualRotY + autoSpinY;
+    const targetBoardX = 8 - scrollProgress * 40;
+    const targetCamZ = 22 - scrollProgress * 10;
+    const targetCamY = 6 - scrollProgress * 2;
+
+    currentRotY += (targetRotY - currentRotY) * 0.06;
     currentBoardX += (targetBoardX - currentBoardX) * 0.06;
-    currentCamZ   += (targetCamZ   - currentCamZ)   * 0.06;
-    currentCamY   += (targetCamY   - currentCamY)   * 0.06;
+    currentCamZ += (targetCamZ - currentCamZ) * 0.06;
+    currentCamY += (targetCamY - currentCamY) * 0.06;
 
     board.rotation.y = currentRotY;
     board.rotation.x += (manualRotX - board.rotation.x) * 0.06;
@@ -345,27 +390,27 @@ const tick = () => {
     // Hover effect for individual parts
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObject(board, true);
-    
+
     let hoveredMesh = null;
-    if (intersects.length > 0 && scrollProgress < 0.15) {
+    if (intersects.length > 0) {
       hoveredMesh = intersects[0].object;
-      canvas.style.cursor = isDragging ? 'grabbing' : 'grab';
+      canvasBoard.style.cursor = isDragging ? 'grabbing' : 'grab';
     } else {
-      canvas.style.cursor = 'default';
+      canvasBoard.style.cursor = 'default';
     }
-    
+
     board.traverse((child) => {
       if (child.isMesh && child.material) {
         if (!child.userData.origEmissive) {
           child.userData.origEmissive = child.material.emissive ? child.material.emissive.clone() : new THREE.Color(0x000000);
           child.userData.origPosY = child.position.y;
         }
-        
+
         // Reset all EXCEPT moving piece
         if (child !== movingPiece) {
           child.position.y += (child.userData.origPosY - child.position.y) * 0.1;
         }
-        
+
         if (child.material.emissive) {
           child.material.emissive.lerp(child.userData.origEmissive, 0.1);
         }
@@ -379,7 +424,7 @@ const tick = () => {
       }
       hoveredMesh.material.emissive.setHex(0x444444);
     }
-    
+
     // ── Automated Playing (Scripted Match) ─────────────────────────────────
     if (validSquares.length > 0) {
       if (!movingPiece) {
@@ -399,8 +444,8 @@ const tick = () => {
             const move = chessSequence[currentMoveIndex];
             // Depending on camera angle, pieces might be mirrored, but it's consistent.
             const fromIdx = move.from[1] * 8 + move.from[0];
-            const toIdx   = move.to[1]   * 8 + move.to[0];
-            
+            const toIdx = move.to[1] * 8 + move.to[0];
+
             const piece = validSquares[fromIdx].occupant;
             if (piece) {
               movingPiece = piece;
@@ -408,11 +453,11 @@ const tick = () => {
               movingPiece.userData.targetPos = new THREE.Vector3(validSquares[toIdx].x, piece.position.y, validSquares[toIdx].z);
               movingPiece.userData.moveProgress = 0;
               movingPiece.userData.origPosY = piece.position.y;
-              
+
               // Update grid state instantly so logic is sound
               validSquares[toIdx].occupant = piece;
               validSquares[fromIdx].occupant = null;
-              
+
               currentMoveIndex++;
               moveTimer = 0.5 + Math.random() * 0.5; // Pause between moves
             } else {
@@ -426,14 +471,14 @@ const tick = () => {
         // Animate the piece moving
         movingPiece.userData.moveProgress += delta * 3.0; // Speed of movement
         const p = Math.min(movingPiece.userData.moveProgress, 1);
-        
+
         movingPiece.position.x = THREE.MathUtils.lerp(movingPiece.userData.origPos.x, movingPiece.userData.targetPos.x, p);
         movingPiece.position.z = THREE.MathUtils.lerp(movingPiece.userData.origPos.z, movingPiece.userData.targetPos.z, p);
-        
+
         // Parabolic jump arc
         const jumpHeight = 1.5;
         movingPiece.position.y = movingPiece.userData.origPosY + Math.sin(p * Math.PI) * jumpHeight;
-        
+
         if (p >= 1) {
           movingPiece.position.y = movingPiece.userData.origPosY;
           movingPiece = null;
@@ -444,12 +489,19 @@ const tick = () => {
     camera.position.z = currentCamZ;
     camera.position.y = currentCamY;
     camera.lookAt(0, 0, 0);
+
+    // Hide board when scrolling past the hero section so it doesn't overflow!
+    if (window.scrollY > window.innerHeight * 0.8) {
+      board.visible = false;
+    } else {
+      board.visible = true;
+    }
   }
 
   // ── Phase 2: King ─────────────────────────────────────────────────────────
-  // Enters much earlier: 0.15 -> 0.35, Exits 0.75 -> 0.9
-  const p2Enter = Math.max(Math.min((scrollProgress - 0.15) / 0.20, 1), 0);
-  const p2Exit  = Math.max(Math.min((scrollProgress - 0.75) / 0.15, 1), 0);
+  // Enters much earlier as soon as user starts scrolling past hero (0.1 to 0.6 of innerHeight)
+  const p2Enter = Math.max(Math.min((window.scrollY - window.innerHeight * 0.1) / (window.innerHeight * 0.5), 1), 0);
+  const p2Exit = Math.max(Math.min((window.scrollY - window.innerHeight * 1.2) / (window.innerHeight * 0.5), 1), 0);
 
   if (king) {
     king.visible = true;
@@ -458,10 +510,10 @@ const tick = () => {
     king.position.x = currentKingX;
     king.position.y = Math.sin(elapsed * 1.5) * 0.08 - 2;
 
-    // Camera reset toward neutral in phase 2
+    // Camera reset toward neutral as pieces enter
     if (p2Enter > 0) {
       currentCamZ += (22 - currentCamZ) * 0.03;
-      currentCamY += ( 6 - currentCamY) * 0.03;
+      currentCamY += (6 - currentCamY) * 0.03;
       camera.position.z = currentCamZ;
       camera.position.y = currentCamY;
       camera.lookAt(0, 0, 0);
@@ -469,18 +521,21 @@ const tick = () => {
   }
 
   // ── Phase 3: Queen ────────────────────────────────────────────────────────
-  // Enters 0.75 -> 0.9
-  const p3 = Math.max(Math.min((scrollProgress - 0.75) / 0.15, 1), 0);
+  // Enters as soon as user hits the Command section (0.8 to 1.4 of innerHeight)
+  const p3Enter = Math.max(Math.min((window.scrollY - window.innerHeight * 1.2) / (window.innerHeight * 0.6), 1), 0);
+  // Exits as user scrolls past the Command section (1.8 to 2.3 of innerHeight)
+  const p3Exit = Math.max(Math.min((window.scrollY - window.innerHeight * 2.3) / (window.innerHeight * 0.5), 1), 0);
 
   if (queen) {
     queen.visible = true;
-    const targetQueenX = 35 - p3 * (35 - QUEEN_REST_X);
+    const targetQueenX = 35 - (p3Enter - p3Exit) * (35 - QUEEN_REST_X);
     currentQueenX += (targetQueenX - currentQueenX) * 0.06;
     queen.position.x = currentQueenX;
     queen.position.y = Math.sin(elapsed * 1.5 + Math.PI) * 0.08 - 2;
   }
 
-  renderer.render(scene, camera);
+  rendererBoard.render(sceneBoard, camera);
+  rendererPieces.render(scenePieces, camera);
   window.requestAnimationFrame(tick);
 };
 

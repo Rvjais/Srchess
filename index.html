@@ -7,22 +7,30 @@
     <meta name="description" content="SRChess — The ultimate platform for chess enthusiasts. Play, learn, and compete with players worldwide." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="./style.css">
   </head>
   <body>
+    <div class="hero-curved-mask">
+      <!-- Grid Trail Background -->
+      <div id="grid-trail-container"></div>
+      
+      <!-- Chessboard Canvas (Masked) -->
+      <canvas id="webgl-board"></canvas>
+    </div>
 
-    <!-- Grid Trail Background -->
-    <div id="grid-trail-container"></div>
+    <!-- King/Queen Canvas (Spans whole page) -->
+    <canvas id="webgl-pieces"></canvas>
 
-    <!-- Fixed 3D Canvas -->
-    <canvas id="webgl"></canvas>
+    <div class="hero-content-wrapper">
 
     <!-- ── Navbar ──────────────────────────────────────────────────────────── -->
     <nav class="navbar" id="navbar">
       <div class="nav-inner">
-        <a href="#" class="nav-logo">SR<span>CA</span></a>
+        <a href="#" class="nav-logo">
+          <img src="/frontend/assets/srcamain/images/logo-black03.png" alt="SRCA Logo" style="height: 40px;">
+        </a>
 
         <ul class="nav-links">
           <li class="dropdown">
@@ -58,78 +66,268 @@
     <!-- ── Section 1: Hero (Phase 1 — board) ──────────────────────────────── -->
     <section class="section section-hero">
       <div class="hero-content">
-        <div class="hero-badge">♟ Where Champions Are Born</div>
-        <h1 class="hero-title">
-          Master the <br>
-          <span class="gradient-text">Art of Chess.</span>
+        <div class="hero-badge">Welcome to SRCA</div>
+        <h1 class="hero-title" style="font-size: 4rem;">
+          Where Champions <br>
+          <span class="gradient-text">Are Born!</span>
         </h1>
-        <p class="hero-sub">At Shivika Rohilla Chess Academy, we nurture young minds to think strategically, act decisively, and compete confidently.</p>
+        <p class="hero-sub">At Shivika Rohilla Chess Academy, we nurture young minds to think strategically, act decisively and compete confidently. Join Us to master the Art Of Chess and unlock your potential.</p>
         <div class="hero-actions">
           <a href="/signup" class="btn-primary">Get Started</a>
         </div>
       </div>
-      <div class="scroll-hint">
-        <span>Scroll to explore</span>
-        <div class="scroll-line"></div>
-      </div>
     </section>
+    </div>
 
     <!-- ── Section 2: Strategy (Phase 2 — King on left) ──────────────────── -->
-    <section class="section section-strategy">
-      <div class="content-right sticky-content">
-        <div class="glass-card card-purple">
+    <section class="section-normal section-strategy">
+      <div class="glass-card card-purple" style="margin-left: auto; margin-right: 0; max-width: 950px; width: 100%;">
           <span class="card-tag">DREAM MOVE INITIATIVE</span>
           <h2 class="card-title">Opening the chessboard to every <span class="gradient-text">talent.</span></h2>
           <p class="card-body">Supporting blind champions, senior minds & young girls in chess. We believe that chess is a universal language that transcends all barriers. Our Dream Move Initiative provides dedicated resources, specialized coaching, and financial support to ensure that every passionate player has the opportunity to master the game, regardless of their background or physical abilities.</p>
 
           <ul class="features-list">
             <li>
-              <span class="feat-icon">🎓</span>
+              <span class="feat-icon"><i class="fas fa-certificate" style="font-size: 1.5rem; color: var(--gold-royal);"></i></span>
               <div>
                 <strong><a href="https://docs.google.com/spreadsheets/d/1O5iU5IOBoQHZ0QNfIKBq6xMzU5MlYeBXO70bcsyvT1s/edit?gid=0#gid=0" target="_blank" style="color: inherit; text-decoration: none;">Download Certificates</a></strong>
               </div>
             </li>
             <li>
-              <span class="feat-icon">📷</span>
+              <span class="feat-icon"><i class="fas fa-image" style="font-size: 1.5rem; color: var(--gold-royal);"></i></span>
               <div>
                 <strong><a href="https://docs.google.com/spreadsheets/d/1Y7oHirDt_kffeIpl6U5MMgfquKjUfusIY7CX-gOkN0E/edit?gid=0#gid=0" target="_blank" style="color: inherit; text-decoration: none;">View Tournament Photos & Videos</a></strong>
               </div>
             </li>
             <li>
-              <span class="feat-icon">📅</span>
+              <span class="feat-icon"><i class="fas fa-medal" style="font-size: 1.5rem; color: var(--gold-royal);"></i></span>
               <div>
                 <strong><a href="https://srchessacademy.com/chess-coffee-connect" target="_blank" style="color: inherit; text-decoration: none;">View Upcoming Events</a></strong>
               </div>
             </li>
+            <li>
+              <span class="feat-icon"><i class="fas fa-video" style="font-size: 1.5rem; color: var(--gold-royal);"></i></span>
+              <div>
+                <strong><a href="https://srchessacademy.com/masterclass" target="_blank" style="color: inherit; text-decoration: none;">Live Masterclasses</a></strong>
+                <p style="margin-top: 0.2rem; font-size: 0.9rem; color: var(--text-sub);">Join our grandmasters for exclusive weekly strategy breakdowns and Q&A sessions.</p>
+              </div>
+            </li>
           </ul>
         </div>
-      </div>
     </section>
 
     <!-- ── Section 3: Command (Phase 3 — Queen on right) ─────────────────── -->
-    <section class="section section-queen">
-      <div class="content-left sticky-content">
-        <div class="glass-card card-blue">
+    <section class="section-normal section-queen">
+      <div class="glass-card card-blue" style="margin-left: 0; margin-right: auto; max-width: 950px; width: 100%;">
           <span class="card-tag">EMPOWER SUCCESS</span>
           <h2 class="card-title">Inspire <span class="gradient-text">Strength</span></h2>
           <p class="card-body">Build mental toughness with our expert sports psychologist. Outsmart, Checkmate, and Win Big with our monthly Chess Trivia. Chess is not just about the moves on the board; it's a battle of the mind. Our comprehensive psychological training programs help players develop unbreakable focus, emotional resilience, and the strategic foresight required to dominate high-pressure tournaments.</p>
 
           <ul class="features-list">
             <li>
-              <span class="feat-icon">🧠</span>
+              <span class="feat-icon"><i class="fas fa-brain" style="font-size: 1.5rem; color: var(--gold-royal);"></i></span>
               <div>
                 <strong>Stress Test</strong>
-                <p><a href="https://srchessacademy.com/stress_test_parents" style="color:var(--gold);">For Parents</a> &nbsp;•&nbsp; <a href="https://srchessacademy.com/stress_test_children" style="color:var(--gold);">For Children</a></p>
+                <p><a href="https://srchessacademy.com/stress_test_parents" style="color:var(--gold-royal);">For Parents</a> &nbsp;•&nbsp; <a href="https://srchessacademy.com/stress_test_children" style="color:var(--gold-royal);">For Children</a></p>
               </div>
             </li>
             <li>
-              <span class="feat-icon">🧩</span>
+              <span class="feat-icon"><i class="fas fa-puzzle-piece" style="font-size: 1.5rem; color: var(--gold-royal);"></i></span>
               <div>
                 <strong>Chess Trivia</strong>
-                <p>Solve trivia, score discounts! <a href="https://srchessacademy.com/signin?page=chess_trivia" style="color:var(--gold); font-weight: 600;">Play Now</a></p>
+                <p>Solve trivia, score discounts! <a href="https://srchessacademy.com/signin?page=chess_trivia" style="color:var(--gold-royal); font-weight: 600;">Play Now</a></p>
+              </div>
+            </li>
+            <li>
+              <span class="feat-icon"><i class="fas fa-heartbeat" style="font-size: 1.5rem; color: var(--gold-royal);"></i></span>
+              <div>
+                <strong>Psychological Counseling</strong>
+                <p>1-on-1 sessions to build unshakeable mental resilience for high-pressure matches. <a href="https://srchessacademy.com/counseling" style="color:var(--gold-royal); font-weight: 600;">Book a Session</a></p>
               </div>
             </li>
           </ul>
+        </div>
+    </section>
+
+    <!-- ── Section 4: Services We Provide ─────────────────────────────────── -->
+    <section class="section-normal" id="services">
+      <div class="section-header">
+        <span class="card-tag">Providing Since 2020</span>
+        <h2>Services We Provide</h2>
+        <p>Everything Chess, All Under One Roof! From expert coaching and tournament guidance to social media services and workshops.</p>
+      </div>
+      <div class="grid-3">
+        <div class="service-card">
+          <img src="/frontend/assets/srcamain/images/playing-chess1.webp" alt="Coaching Classes" class="service-img" style="width:100%; border-radius:10px; margin-bottom:1rem;">
+          <h3>Coaching Classes</h3>
+          <p>Master techniques with personalized training designed for different skill levels.</p>
+        </div>
+        <div class="service-card">
+          <img src="/frontend/assets/srcamain/images/guide1.webp" alt="Tournament Guidance" class="service-img" style="width:100%; border-radius:10px; margin-bottom:1rem;">
+          <h3>Tournament Guidance</h3>
+          <p>Refine strategies, elevate your game, and plan for rated events and championships.</p>
+        </div>
+        <div class="service-card">
+          <img src="/frontend/assets/srcamain/images/b1.jpeg" alt="Player & Parent Workshop" class="service-img" style="width:100%; border-radius:10px; margin-bottom:1rem; height: 180px; object-fit: cover;">
+          <h3>Player & Parent Workshop</h3>
+          <p>Building a thriving chess culture and supporting young minds holistically.</p>
+        </div>
+        <div class="service-card">
+          <img src="/frontend/assets/srcamain/images/learn-network.webp" alt="Chess Coffee Connect" class="service-img" style="width:100%; border-radius:10px; margin-bottom:1rem;">
+          <h3>Chess Coffee Connect</h3>
+          <p>Learn, network, and enjoy chess over coffee with a vibrant community.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 5: Inclusive Opportunities ─────────────────────────────── -->
+    <section class="section-normal" id="inclusive">
+      <div class="section-header">
+        <span class="card-tag">Opportunities</span>
+        <h2>Inclusive Opportunities</h2>
+        <p>10% discount for girls and special initiatives for underprivileged children and specially-abled talented players.</p>
+      </div>
+    </section>
+
+    <!-- ── Section 6: About Founder ───────────────────────────────────────── -->
+    <section class="section-normal" id="about">
+      <div class="about-split">
+        <div class="about-image">
+          <img src="/frontend/assets/srcamain/images/1.jpeg" alt="WIM Shivika Rohilla">
+        </div>
+        <div class="about-content">
+          <span class="card-tag" style="display: block; margin-bottom: 0.5rem; color: var(--gold);">We transform you into a skilled professional</span>
+          <h3 style="margin-bottom: 0.5rem;">Welcome to Shivika Rohilla Chess Academy!</h3>
+          <h4 style="color: var(--text-dark); margin-bottom: 1rem; font-family: var(--font-serif);">WIM Shivika Rohilla</h4>
+          <p>SRCA was founded with a vision to provide everything related to chess under one roof—from professional coaching and tournaments to corporate workshops and team-building events. Our goal is to nurture talent, inspire passion, and build a thriving chess community in Delhi. By combining expertise, innovation, and dedication, we aim to create a legacy of chess in Delhi, empowering players of all ages to achieve excellence on and off the board.</p>
+          <p>Join us to learn, grow, and become part of a movement that’s redefining chess culture in India!</p>
+          <p><strong>"Chess is more than a game; it's a journey of growth, strategy, and endless possibilities."</strong></p>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSe5fcFC-x55EoULoYVaz39GYwpcJ-IYfuPqZSr0uEb9qUJceg/viewform" target="_blank" class="btn-primary" style="margin-top: 1rem; display: inline-block;">Start your Journey</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 7: Learning Levels ─────────────────────────────────────── -->
+    <section class="section-normal" id="levels">
+      <div class="section-header">
+        <span class="card-tag">Steps Towards Professional</span>
+        <h2>Chess Learning Levels</h2>
+        <p>Start with the basics, advance through strategy and tactics, and refine endgame skills.</p>
+      </div>
+      <div class="grid-4">
+        <div class="level-card">
+          <div class="level-number">1</div>
+          <h4>Freshers</h4>
+          <p>Laying the groundwork for a bright future!</p>
+        </div>
+        <div class="level-card">
+          <div class="level-number">2</div>
+          <h4>Beginners</h4>
+          <p>Building confidence with every step forward!</p>
+        </div>
+        <div class="level-card">
+          <div class="level-number">3</div>
+          <h4>Advanced Beginners</h4>
+          <p>Refining skills and enhancing strategies!</p>
+        </div>
+        <div class="level-card">
+          <div class="level-number">4</div>
+          <h4>Intermediate</h4>
+          <p>Honing expertise for consistent growth!</p>
+        </div>
+        <div class="level-card">
+          <div class="level-number">5</div>
+          <h4>Advanced</h4>
+          <p>Pushing boundaries to achieve excellence!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 8: Coaches ─────────────────────────────────────────────── -->
+    <section class="section-normal" id="coaches">
+      <div class="section-header">
+        <span class="card-tag">Mastermind Collective</span>
+        <h2>Your Winning Support Team</h2>
+        <p>Masters of strategy, shaping champions within you, One Move at a Time.</p>
+      </div>
+      <div class="grid-4">
+        <div class="coach-card">
+          <img src="/frontend/assets/srcamain/images/jaydeep-sharma.webp" alt="Jaydeep Sharma" class="coach-img">
+          <div class="coach-info">
+            <h4>Jaydeep Sharma</h4>
+            <span>FIDE Instructor</span>
+          </div>
+        </div>
+        <div class="coach-card">
+          <img src="/frontend/assets/srcamain/images/Aashritta-Chaudhary.webp" alt="Aashritta Chaudhary" class="coach-img">
+          <div class="coach-info">
+            <h4>Aashritta Chaudhary</h4>
+            <span>Sports Psychologist</span>
+          </div>
+        </div>
+        <div class="coach-card">
+          <img src="/frontend/assets/srcamain/images/Ankit-Arora.webp" alt="Ankit Arora" class="coach-img">
+          <div class="coach-info">
+            <h4>Ankit Arora</h4>
+            <span>Chess Coach</span>
+          </div>
+        </div>
+        <div class="coach-card">
+          <img src="/frontend/assets/srcamain/images/hemant_sharma.jpg" alt="IM Hemant Sharma" class="coach-img">
+          <div class="coach-info">
+            <h4>IM Hemant Sharma</h4>
+            <span>Intermediate Batch</span>
+          </div>
+        </div>
+        <div class="coach-card">
+          <img src="/frontend/assets/srcamain/images/tejas_bakre.jpg" alt="Tejas Bakre" class="coach-img">
+          <div class="coach-info">
+            <h4>Tejas Bakre</h4>
+            <span>Grandmaster / Coach</span>
+          </div>
+        </div>
+        <div class="coach-card">
+          <img src="/frontend/assets/srcamain/images/vishal_sareen.jpg" alt="Vishal Sareen" class="coach-img">
+          <div class="coach-info">
+            <h4>Vishal Sareen</h4>
+            <span>International Master</span>
+          </div>
+        </div>
+        <div class="coach-card">
+          <img src="/frontend/assets/srcamain/images/yogender_prakash.jpg" alt="Yogender Prakash" class="coach-img">
+          <div class="coach-info">
+            <h4>Yogender Prakash</h4>
+            <span>Chess Coach</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 9: Testimonials ────────────────────────────────────────── -->
+    <section class="section-normal" id="testimonials">
+      <div class="section-header">
+        <span class="card-tag">Reviews</span>
+        <h2>Testimonials</h2>
+        <p>Hear from our students and parents about their journey with SRCA.</p>
+      </div>
+      <div class="grid-3">
+        <div class="testimonial-card">
+          <img src="/frontend/assets/srcamain/images/Aradhya.webp" alt="Aradhya" class="testimonial-img">
+          <h4>Aradhya</h4>
+          <span>Student</span>
+          <p>"SRCA’s care and planning are amazing. My child’s confidence and chess skills have grown so much since joining the academy."</p>
+        </div>
+        <div class="testimonial-card">
+          <img src="/frontend/assets/srcamain/images/nanaki.webp" alt="Nanaki" class="testimonial-img">
+          <h4>Nanaki</h4>
+          <span>Student</span>
+          <p>"SRCA doesn’t just teach chess, they help with personal growth too. My child is now more focused, confident, and disciplined."</p>
+        </div>
+        <div class="testimonial-card">
+          <img src="/frontend/assets/srcamain/images/yumna.webp" alt="Yumna" class="testimonial-img">
+          <h4>Yumna</h4>
+          <span>Student</span>
+          <p>"The coaches at SRCA are truly exceptional. My child not only improved in chess but also gained valuable life skills."</p>
         </div>
       </div>
     </section>
@@ -150,6 +348,62 @@
         <span>"Every chess master was once a beginner." – Irving Chernev &nbsp; | &nbsp; "Chess is the gymnasium of the mind." – Blaise Pascal &nbsp; | &nbsp; "In chess, as in life, opportunity strikes but once." – David Bronstein &nbsp; | &nbsp; "The beauty of a move lies not in its appearance but in the thought behind it." – A. T. Fomenko &nbsp; | &nbsp; "Chess is a game of patience and strategy." &nbsp; | &nbsp; "A good player knows all the rules, a great player knows how to break them." &nbsp; | &nbsp; "Chess is life in miniature. Chess is a struggle." – Garry Kasparov &nbsp; | &nbsp; "You can't play chess without losing pawns." – James Mateson &nbsp; | &nbsp; "The hardest game to win is a won game." – Emanuel Lasker &nbsp; | &nbsp; "A pawn that reaches the eighth rank is a queen."</span>
       </div>
     </div>
+
+    <!-- ── Footer ─────────────────────────────────────────────────────────── -->
+    <footer class="footer-section">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <img src="/frontend/assets/srcamain/images/logo-black03.png" style="height: 60px; filter: invert(1); margin-bottom: 1rem;" alt="Logo">
+          <p style="color: var(--text-mid); font-size: 0.9rem; margin-bottom: 1rem;">Join Our Whatsapp Community<br>Connect with fellow chess enthusiasts in Delhi!</p>
+          <img src="/frontend/assets/srcamain/images/ccc-whatsapp-1.png" style="height: 60px;" alt="Whatsapp">
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="https://srchessacademy.com/home">Home</a></li>
+            <li><a href="https://srchessacademy.com/buy_chess_merchandise">Shop</a></li>
+            <li><a href="https://srchessacademy.com/blog">Blog</a></li>
+            <li><a href="https://srchessacademy.com/gallery">Gallery</a></li>
+            <li><a href="https://srchessacademy.com/about">About</a></li>
+            <li><a href="https://srchessacademy.com/faq">FAQs</a></li>
+            <li><a href="https://srchessacademy.com/contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="https://srchessacademy.com/coaching">Coaching</a></li>
+            <li><a href="https://srchessacademy.com/chess-consultation">Chess Consultation</a></li>
+            <li><a href="https://srchessacademy.com/workshops">Workshops</a></li>
+            <li><a href="https://srchessacademy.com/social-media-management">Chess Climb Media</a></li>
+            <li><a href="https://srchessacademy.com/chess-coffee-connect">Coffee Connect</a></li>
+            <li><a href="https://srchessacademy.com/career">Career</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="https://srchessacademy.com/shipping_policy">Shipping Policy</a></li>
+            <li><a href="https://srchessacademy.com/privacy">Privacy Policy</a></li>
+            <li><a href="https://srchessacademy.com/terms-conditions">Terms & Conditions</a></li>
+            <li><a href="https://srchessacademy.com/return-refund-policy">Return & Refund Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Information</h4>
+          <ul>
+            <li><a href="tel:+917042854007">+91-7042854007</a></li>
+            <li><a href="tel:+918076689078">+91-8076689078</a></li>
+            <li><a href="mailto:contactus@srchessacademy.com">contactus@srchessacademy.com</a></li>
+            <li><a href="mailto:enquiries.srca@gmail.com">enquiries.srca@gmail.com</a></li>
+            <li style="color: var(--text-mid); font-size: 0.9rem; margin-top: 1rem;">B-7/93, Extn, Safdarjung Enclave.<br>New Delhi - 110029</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 SRCA. Designed with <a href="#">Art of Chess</a></p>
+      </div>
+    </footer>
 
     <script type="module" src="/main.js"></script>
   </body>
