@@ -7,7 +7,7 @@ const gridContainer = document.getElementById('grid-trail-container');
 if (gridContainer) {
   const createGrid = () => {
     gridContainer.innerHTML = '';
-    const tileSize = Math.max(window.innerWidth / 50, 15); // approx 36 columns, min 45px
+    const tileSize = Math.max(window.innerWidth / 25, 40); // Balanced size: small enough for aesthetics, large enough for performance
     const cols = Math.ceil(window.innerWidth / tileSize);
     const rows = Math.ceil(window.innerHeight / tileSize);
     gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
@@ -78,9 +78,24 @@ setupLighting(sceneBoard);
 setupLighting(scenePieces);
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-const textureLoader = new THREE.TextureLoader();
-const objLoader = new OBJLoader();
-const gltfLoader = new GLTFLoader();
+const manager = new THREE.LoadingManager();
+manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+  const progressBar = document.getElementById('loading-progress');
+  if (progressBar) {
+    progressBar.style.width = (itemsLoaded / itemsTotal * 100) + '%';
+  }
+};
+manager.onLoad = () => {
+  const loadingScreen = document.getElementById('loading-screen');
+  if (loadingScreen) {
+    loadingScreen.classList.add('hidden');
+    setTimeout(() => { loadingScreen.style.display = 'none'; }, 800);
+  }
+};
+
+const textureLoader = new THREE.TextureLoader(manager);
+const objLoader = new OBJLoader(manager);
+const gltfLoader = new GLTFLoader(manager);
 
 function loadOBJ(objUrl, texUrl, targetHeightUnits, startX, callback) {
   const tex = textureLoader.load(texUrl);
@@ -120,6 +135,7 @@ function loadOBJ(objUrl, texUrl, targetHeightUnits, startX, callback) {
 // ─── Phase 1: Chess Board (GLB) ──────────────────────────────────────────────
 let board = null;
 let playablePieces = [];
+let boardMeshes = []; // Cached array of meshes for performance
 // Variables removed
 // Grid of valid board squares — built from initial world positions of pieces
 let validSquares = [];
@@ -140,6 +156,16 @@ gltfLoader.load('/ChessScene.glb', (gltf) => {
       const maxDim = Math.max(childSize.x, childSize.y, childSize.z);
       if (maxDim < size.x * 0.5) {
         playablePieces.push(child);
+      }
+      
+      // Cache mesh for performance in render loop
+      if (child.material) {
+        boardMeshes.push(child);
+        if (child.material.emissive) {
+          child.userData.origEmissive = child.material.emissive.clone();
+        } else {
+          child.userData.origEmissive = new THREE.Color(0x000000);
+        }
       }
     }
   });
@@ -422,16 +448,12 @@ const tick = () => {
     // Scatter logic based on scrollProgress
     const scatterEased = Math.pow(scrollProgress, 0.8);
 
-    board.traverse((child) => {
-      if (child.isMesh && child.material) {
-        if (!child.userData.origEmissive) {
-          child.userData.origEmissive = child.material.emissive ? child.material.emissive.clone() : new THREE.Color(0x000000);
-        }
-        if (child.material.emissive) {
-          child.material.emissive.lerp(child.userData.origEmissive, 0.1);
-        }
+    // Use cached array instead of traversing tree for performance
+    for (const child of boardMeshes) {
+      if (child.material && child.material.emissive) {
+        child.material.emissive.lerp(child.userData.origEmissive, 0.1);
       }
-    });
+    }
 
     for (const p of playablePieces) {
       if (!p.userData.initialPos) continue;

@@ -36,31 +36,55 @@ body {
   position: relative;
 }
 
-/* Ambient Background Lighting */
-body::before, body::after {
-  content: '';
+/* Ambient background lighting removed for professional look */
+/* ─── Loading Screen ─────────────────────────────────────────────────────── */
+#loading-screen {
   position: fixed;
-  width: 800px;
-  height: 800px;
+  inset: 0;
+  background-color: var(--navy-deep);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-light);
+  transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+}
+#loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+.loader-content {
+  text-align: center;
+}
+.chess-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(212, 175, 55, 0.3);
+  border-top-color: var(--gold-royal);
   border-radius: 50%;
-  filter: blur(150px);
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.3;
-  animation: floatAmbient 25s infinite alternate ease-in-out;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
 }
-body::before {
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, transparent 70%);
-  top: -10%; left: -10%;
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.loader-content h2 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  letter-spacing: 2px;
 }
-body::after {
-  background: radial-gradient(circle, rgba(10, 25, 47, 0.35) 0%, transparent 70%);
-  bottom: -20%; right: -10%;
-  animation-duration: 35s;
+.progress-bar-container {
+  width: 250px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 0 auto;
 }
-@keyframes floatAmbient {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(150px, 150px); }
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--gold-royal);
+  transition: width 0.2s;
 }
 
 .hero-curved-mask {
@@ -109,12 +133,9 @@ body::after {
   position: relative;
 }
 .grid-tile:hover {
-  transition: transform 0.1s cubic-bezier(0, 0, 0.2, 1), box-shadow 0s, background-color 0s;
-  /* Lift straight up off the 3D floor */
-  transform: translateZ(50px) scale(1.05);
-  background-color: var(--gold-royal) !important; /* Solid yellow block, override inline styles */
-  box-shadow: 0 30px 40px rgba(212, 175, 55, 0.4); /* Golden shadow cast on the floor */
-  border: 1px solid var(--gold-royal); /* Stronger golden border */
+  transition: background-color 0s;
+  background-color: rgba(212, 175, 55, 0.2) !important; /* Subtle highlight instead of solid block */
+  border: 1px solid rgba(212, 175, 55, 0.4);
   z-index: 10;
 }
 
@@ -263,8 +284,9 @@ body::after {
 .glass-panel {
   /* Glass card styling moved here */
   background: rgba(252, 252, 252, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(8px); /* Reduced blur for performance */
+  -webkit-backdrop-filter: blur(8px);
+  will-change: transform, backdrop-filter; /* Hardware acceleration */
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 32px;
   padding: 3rem; /* Slightly reduced padding */
@@ -284,7 +306,7 @@ body::after {
   padding: 0.5rem 1.2rem;
   border-radius: 50px;
   margin-bottom: 1rem;
-  box-shadow: 0 4px 14px var(--accent-glow);
+  /* Removed glow shadow */
 }
 
 .hero-title {
@@ -295,7 +317,7 @@ body::after {
   letter-spacing: -1px;
   color: var(--navy-deep); /* Use navy deep for stronger contrast instead of text-main */
   margin-bottom: 0.5rem;
-  text-shadow: 0 10px 30px rgba(10, 25, 47, 0.08); /* Soft elegant shadow to make it pop */
+  /* Removed text-shadow */
 }
 
 .gradient-text {
@@ -311,7 +333,7 @@ body::after {
   line-height: 1.6;
   margin-bottom: 1.5rem;
   max-width: 500px;
-  text-shadow: 0 4px 12px rgba(255, 255, 255, 0.8); /* Ensures it's legible against grid */
+  /* Removed text-shadow */
 }
 
 .hero-actions {
@@ -331,13 +353,13 @@ body::after {
   padding: 0.8rem 2rem;
   border-radius: 8px;
   text-decoration: none;
-  box-shadow: 0 4px 14px var(--accent-glow);
-  transition: transform 0.2s, box-shadow 0.2s;
+  /* Removed glow shadow */
+  transition: transform 0.2s, background 0.2s;
   pointer-events: auto; /* Re-enable clicking */
 }
 .btn-primary:hover { 
   transform: translateY(-2px); 
-  box-shadow: 0 8px 24px var(--accent-glow); 
+  background: var(--gold-royal);
 }
 
 .btn-ghost {
@@ -374,13 +396,13 @@ body::after {
   border: 1px solid rgba(212, 175, 55, 0.3); /* Subtle Gold border */
   border-radius: 24px;
   padding: 2.2rem 3.5rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  transform: translateY(-8px) scale(1.01);
-  box-shadow: 0 24px 48px var(--accent-glow);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
 }
 
 .card-purple {
@@ -770,35 +792,14 @@ body::after {
 }
 
 .service-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 20px;
-  padding: 2.5rem 2rem;
+  background: transparent;
+  padding: 1.5rem 1rem;
   text-align: center;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 10px 30px rgba(0, 0, 0, 0.05);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
-  transform-style: preserve-3d;
-}
-.service-card::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%; width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-  transform: skewX(-20deg);
-  transition: 0s;
-  pointer-events: none;
-}
-.service-card:hover::after {
-  left: 200%;
-  transition: left 0.8s ease-in-out;
 }
 .service-card:hover {
-  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) scale3d(1.02, 1.02, 1.02);
-  box-shadow: 10px 24px 48px var(--accent-glow);
+  transform: translateY(-8px);
 }
 
 .service-card:hover .service-img {
@@ -825,50 +826,26 @@ body::after {
   line-height: 1.7;
 }
 
-/* Banner Card (Inclusive) */
 .banner-card {
   position: relative;
-  overflow: hidden;
   text-align: center;
   max-width: 900px;
   margin: 0 auto;
-  background: linear-gradient(135deg, rgba(10, 25, 47, 0.95), rgba(10, 25, 47, 0.8));
-  border: 1px solid rgba(212, 175, 55, 0.5);
-  padding: 4rem 3rem;
-  border-radius: 24px;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.1), 0 20px 40px rgba(0, 0, 0, 0.3);
-  transform: perspective(1000px) translateZ(0);
-  transition: transform 0.5s;
+  padding: 4rem 1rem;
+  border-top: 1px solid rgba(212, 175, 55, 0.3);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
 }
-.banner-card:hover {
-  transform: perspective(1000px) translateZ(20px) rotateX(1deg);
-}
-.banner-card::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%; width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
-  animation: shimmer 4s infinite;
-  pointer-events: none;
-}
-@keyframes shimmer {
-  0% { left: -100%; }
-  50% { left: 200%; }
-  100% { left: 200%; }
-}
+/* Shimmer effect removed for clean look */
 
 .coach-card {
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 10px 30px rgba(0, 0, 0, 0.15);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: left;
-  transform-style: preserve-3d;
+  border-bottom: 2px solid transparent;
+  transition: border-bottom-color 0.4s;
 }
 .coach-card:hover {
-  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) scale3d(1.02, 1.02, 1.02);
-  box-shadow: 10px 24px 48px rgba(212, 175, 55, 0.3);
+  border-bottom-color: var(--gold-royal);
 }
 
 .coach-img {
@@ -954,28 +931,13 @@ body::after {
   color: var(--gold-royal);
   margin-bottom: 0.8rem;
 }
-.about-titlebody {
-  font-family: var(--font-sans);
-  background: var(--bg-cream);
-  color: var(--text-main);
-  overflow-x: hidden;
-  position: relative;
+.about-title {
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--navy-deep);
+  margin-bottom: 0.5rem;
 }
-
-/* Ambient Background Lighting */
-body::before, body::after {
-  content: '';
-  position: fixed;
-  width: 800px;
-  height: 800px;
-  border-radius: 50%;
-  filter: blur(150px);
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.3;
-  animation: floatAmbient 25s infinite alternate ease-in-out;
-}
-body::before {
   background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
   top: -10%; left: -10%;
 }
@@ -1013,34 +975,14 @@ body::after {
 /* Removed old h3 and p rules for about-content since they are replaced by classes */
 
 .level-card {
-  background: rgba(10, 25, 47, 0.85); /* Deep Navy */
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-radius: 16px;
-  padding: 2.5rem 1.5rem;
+  padding: 1.5rem 1rem;
   text-align: center;
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.1), 0 10px 30px rgba(0, 0, 0, 0.15);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  transition: border-bottom-color 0.3s;
   position: relative;
-  overflow: hidden;
-}
-.level-card::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%; width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
-  transform: skewX(-20deg);
-  transition: 0s;
-  pointer-events: none;
-}
-.level-card:hover::after {
-  left: 200%;
-  transition: left 0.8s ease-in-out;
 }
 .level-card:hover {
-  transform: perspective(1000px) translateZ(30px);
-  box-shadow: 0 24px 48px rgba(212, 175, 55, 0.25);
+  border-bottom-color: var(--gold-royal);
 }
 .level-number {
   width: 46px;
@@ -1074,33 +1016,13 @@ body::after {
 /* Testimonials */
 .testimonial-card {
   position: relative;
-  background: rgba(10, 25, 47, 0.85); /* Deep Navy */
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(212, 175, 55, 0.4); /* Gold border */
-  border-radius: 20px;
-  padding: 3rem 2.5rem;
+  padding: 2rem 1.5rem;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.1), 0 10px 30px rgba(0, 0, 0, 0.2);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
-  transform-style: preserve-3d;
-}
-.testimonial-card::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%; width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
-  transform: skewX(-20deg);
-  transition: 0s;
-  pointer-events: none;
-}
-.testimonial-card:hover::after {
-  left: 200%;
-  transition: left 0.8s ease-in-out;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border-left: 1px solid rgba(212, 175, 55, 0.2);
 }
 .testimonial-card::before {
   content: '""';
@@ -1108,14 +1030,13 @@ body::after {
   top: -10px;
   right: 20px;
   font-family: var(--font-serif);
-  font-size: 8rem;
-  color: rgba(212, 175, 55, 0.08);
+  font-size: 6rem;
+  color: rgba(212, 175, 55, 0.15);
   line-height: 1;
   pointer-events: none;
 }
 .testimonial-card:hover {
-  transform: perspective(1000px) rotateX(2deg) rotateY(2deg) scale3d(1.02, 1.02, 1.02);
-  box-shadow: -10px 24px 48px rgba(212, 175, 55, 0.25);
+  transform: translateY(-4px);
 }
 .testimonial-img {
   width: 90px;
