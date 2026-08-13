@@ -15,10 +15,10 @@
     <div class="hero-curved-mask">
       <!-- Grid Trail Background -->
       <div id="grid-trail-container"></div>
-      
-      <!-- Chessboard Canvas (Masked) -->
-      <canvas id="webgl-board"></canvas>
     </div>
+
+    <!-- Chessboard Canvas (Spans whole page) -->
+    <canvas id="webgl-board"></canvas>
 
     <!-- King/Queen Canvas (Spans whole page) -->
     <canvas id="webgl-pieces"></canvas>
@@ -66,18 +66,32 @@
     <!-- ── Section 1: Hero (Phase 1 — board) ──────────────────────────────── -->
     <section class="section section-hero">
       <div class="hero-content">
-        <div class="hero-badge">Welcome to SRCA</div>
-        <h1 class="hero-title" style="font-size: 4rem;">
-          Where Champions <br>
-          <span class="gradient-text">Are Born!</span>
-        </h1>
-        <p class="hero-sub">At Shivika Rohilla Chess Academy, we nurture young minds to think strategically, act decisively and compete confidently. Join Us to master the Art Of Chess and unlock your potential.</p>
-        <div class="hero-actions">
-          <a href="/signup" class="btn-primary">Get Started</a>
+        <div class="hero-left glass-panel">
+          <div class="hero-badge">Welcome to SRCA</div>
+          <h1 class="hero-title">
+            Where Champions <br>
+            <span class="gradient-text">Are Born!</span>
+          </h1>
+        </div>
+        <div class="hero-right glass-panel">
+          <p class="hero-sub">At Shivika Rohilla Chess Academy, we nurture young minds to think strategically, act decisively and compete confidently. Join Us to master the Art Of Chess and unlock your potential.</p>
+          <div class="hero-actions">
+            <a href="/signup" class="btn-primary">Get Started</a>
+          </div>
         </div>
       </div>
     </section>
     </div>
+
+    <!-- Dedicated spacer for board animation -->
+    <section class="section-board-animation">
+      <div class="animation-text-left glass-panel-small">
+        <h3 style="color: var(--navy-deep); margin-bottom: 0; font-size: 2rem;">Unleash Your <br><span class="gradient-text">Potential</span></h3>
+      </div>
+      <div class="animation-text-right glass-panel-small">
+        <p style="color: var(--text-sub); font-weight: 500; margin-bottom: 0; font-size: 1.1rem;">Every piece tells a story. Master the strategies that separate champions from beginners.</p>
+      </div>
+    </section>
 
     <!-- ── Section 2: Strategy (Phase 2 — King on left) ──────────────────── -->
     <section class="section-normal section-strategy">

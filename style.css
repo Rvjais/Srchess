@@ -100,7 +100,7 @@ body::after {
   transform-origin: top center;
 }
 .grid-tile {
-  border: 1px solid rgba(0,0,0,0.03);
+  border: 1px solid rgba(212, 175, 55, 0.15); /* Light golden grid lines */
   /* The normal state transition defines how the tile returns to normal AFTER hover */
   transition: transform 2.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 2.5s ease-out, background-color 2.5s ease-out, z-index 2.5s;
   background-color: transparent;
@@ -112,20 +112,19 @@ body::after {
   transition: transform 0.1s cubic-bezier(0, 0, 0.2, 1), box-shadow 0s, background-color 0s;
   /* Lift straight up off the 3D floor */
   transform: translateZ(50px) scale(1.05);
-  background-color: rgba(0, 0, 0, 0.05);
-  box-shadow: 0 30px 40px rgba(0, 0, 0, 0.15); /* Deep shadow cast on the floor */
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: var(--gold-royal) !important; /* Solid yellow block, override inline styles */
+  box-shadow: 0 30px 40px rgba(212, 175, 55, 0.4); /* Golden shadow cast on the floor */
+  border: 1px solid var(--gold-royal); /* Stronger golden border */
   z-index: 10;
 }
 
 /* ─── 3D Canvases ──────────────────────────────────────────────────────────── */
 #webgl-board {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: fixed;
+  inset: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 2; /* Above the grid inside the mask */
+  z-index: 2; /* Above the grid and pieces */
   pointer-events: none;
 }
 
@@ -239,19 +238,40 @@ body::after {
   height: 85vh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Do not center, start from top */
-  padding-left: 7vw;
-  padding-top: 140px; /* Explicit hard pixel padding to guarantee clearance from the fixed navbar */
-  pointer-events: none; /* Let hover events pass through to the grid */
+  justify-content: flex-start;
+  align-items: center; /* Center horizontally */
+  text-align: center;
+  padding-top: 140px;
+  pointer-events: none;
 }
 
 /* Removed hero glow as per user request */
 
 .hero-content { 
-  max-width: 600px;
+  max-width: 100%;
+  width: 100%;
+  padding: 0 7vw 0 3vw; /* Add more padding on right to clear social bar */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   position: relative;
   z-index: 2;
-  pointer-events: none; /* Let pointer pass through to the grid */
+  pointer-events: none; /* Keep none so you can drag the board through it if needed */
+}
+
+.glass-panel {
+  /* Glass card styling moved here */
+  background: rgba(252, 252, 252, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 32px;
+  padding: 3rem; /* Slightly reduced padding */
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(255,255,255,0.4);
+  max-width: 420px; /* Made narrower to give board more space */
+  pointer-events: auto; /* Allow clicking buttons inside panels */
+  text-align: left;
 }
 
 .hero-badge {
@@ -269,7 +289,7 @@ body::after {
 
 .hero-title {
   font-family: var(--font-serif);
-  font-size: clamp(3.5rem, 6vw, 6rem); /* Slightly larger */
+  font-size: clamp(2.5rem, 4vw, 3.2rem); /* Reduced to fit in glass panel */
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -1px;
@@ -285,10 +305,10 @@ body::after {
 }
 
 .hero-sub {
-  font-size: 1.2rem; /* Larger */
-  font-weight: 600; /* Bolder */
+  font-size: 1.05rem; /* Reduced to fit better */
+  font-weight: 500; /* Slightly lighter for readability */
   color: var(--navy-deep); /* Maximum contrast */
-  line-height: 1.7;
+  line-height: 1.6;
   margin-bottom: 1.5rem;
   max-width: 500px;
   text-shadow: 0 4px 12px rgba(255, 255, 255, 0.8); /* Ensures it's legible against grid */
@@ -298,7 +318,8 @@ body::after {
   display: flex;
   gap: 1rem;
   align-items: center;
-  margin-bottom: 2.5rem;
+  justify-content: flex-start; /* Align left inside the right panel */
+  margin-bottom: 0;
   flex-wrap: wrap;
 }
 
@@ -644,6 +665,37 @@ body::after {
 }
 
 /* Specific sections that need full height for 3D piece scroll */
+.section-board-animation {
+  height: 150vh;
+  pointer-events: none;
+  position: relative;
+  z-index: 3; /* Place above the 3D canvases */
+}
+
+.glass-panel-small {
+  background: rgba(252, 252, 252, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(255,255,255,0.4);
+  max-width: 380px;
+  position: absolute;
+  pointer-events: auto;
+}
+
+.animation-text-left {
+  top: 15%;
+  left: 5vw;
+}
+
+.animation-text-right {
+  bottom: 25%;
+  right: 5vw;
+  text-align: right;
+}
+
 .section-strategy, .section-queen {
   min-height: 100vh;
 }

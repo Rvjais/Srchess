@@ -18,11 +18,11 @@ if (gridContainer) {
       tile.classList.add('grid-tile');
       const col = i % cols;
       const row = Math.floor(i / cols);
-      // Subtle checkerboard pattern
+      // White and Yellow checkerboard pattern
       if ((col + row) % 2 === 0) {
-        tile.style.backgroundColor = 'rgba(255,255,255,0.015)';
+        tile.style.backgroundColor = 'rgba(255, 255, 255, 0.5)'; // White tile
       } else {
-        tile.style.backgroundColor = 'rgba(0,0,0,0.1)';
+        tile.style.backgroundColor = 'rgba(212, 175, 55, 0.4)'; // Yellow/Gold tile
       }
       gridContainer.appendChild(tile);
     }
@@ -120,8 +120,7 @@ function loadOBJ(objUrl, texUrl, targetHeightUnits, startX, callback) {
 // ─── Phase 1: Chess Board (GLB) ──────────────────────────────────────────────
 let board = null;
 let playablePieces = [];
-let movingPiece = null;
-let moveTimer = 2.0;
+// Variables removed
 // Grid of valid board squares — built from initial world positions of pieces
 let validSquares = [];
 
@@ -184,6 +183,25 @@ gltfLoader.load('/ChessScene.glb', (gltf) => {
       p.position.x = validSquares[idx].x;
       p.position.z = validSquares[idx].z;
       p.userData.initialPos = p.position.clone();
+      p.userData.initialRot = p.rotation.clone();
+
+      // Spread them much wider for a bigger explosion effect
+      const radius = 30 + Math.random() * 60;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = (Math.random() - 0.5) * Math.PI;
+
+      p.userData.scatterPos = new THREE.Vector3(
+        p.position.x + radius * Math.cos(phi) * Math.cos(theta),
+        p.position.y + (Math.random() - 0.2) * 50, // More vertical spread
+        p.position.z + radius * Math.cos(phi) * Math.sin(theta)
+      );
+
+      p.userData.scatterRot = new THREE.Euler(
+        Math.random() * Math.PI * 4,
+        Math.random() * Math.PI * 4,
+        Math.random() * Math.PI * 4
+      );
+
       p.userData.squareIdx = idx;
 
       validSquares[idx].occupant = p;
@@ -232,11 +250,10 @@ gltfLoader.load('/ChessScene.glb', (gltf) => {
     for (const sq of validSquares) sq.occupant = null;
     for (const piece of playablePieces) {
       piece.position.copy(piece.userData.initialPos);
+      piece.rotation.copy(piece.userData.initialRot);
       validSquares[piece.userData.squareIdx].occupant = piece;
     }
-    movingPiece = null;
-    currentMoveIndex = 0;
-    moveTimer = 1.0;
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Also scroll to top since scroll drives animation
   });
 
   // Adjust board baseline vertically
@@ -245,25 +262,14 @@ gltfLoader.load('/ChessScene.glb', (gltf) => {
   sceneBoard.add(obj);
 }, undefined, (err) => console.error('Board GLB error:', err));
 
-// ─── Scripted Italian Game Sequence ──────────────────────────────────────────
-// Coordinates are [X (rank), Z (file)] because the 3D model is rotated.
-// White is X=0..1, Black is X=6..7
-const chessSequence = [
-  { from: [1, 3], to: [3, 3] }, // e4 (White Pawn)
-  { from: [6, 3], to: [4, 3] }, // e5 (Black Pawn)
-  { from: [0, 1], to: [2, 2] }, // Nf3 (White Knight)
-  { from: [7, 6], to: [5, 5] }, // Nc6 (Black Knight)
-  { from: [0, 2], to: [3, 5] }, // Bc4 (White Bishop)
-  { from: [7, 2], to: [4, 5] }  // Bc5 (Black Bishop)
-];
-let currentMoveIndex = 0;
+// ─── Scripted sequence removed for scatter animation ──────────────────────
 
 // ─── Phase 2: King (OBJ) — enters from LEFT, rests LEFT ──────────────────────
 let king = null;
 loadOBJ(
   '/12926_Wooden_Chess_King_Side_A_v1_l3.obj',
   '/12926_WoodenChessKingSideA_Diffuse.jpg',
-  2.0,   // height in Three.js units
+  3.2,   // height in Three.js units (increased size)
   -35,   // start off-screen left
   (pivot) => { king = pivot; }
 );
@@ -273,7 +279,7 @@ let queen = null;
 loadOBJ(
   '/12927_Wooden_Chess_Queen_side_A_v1_l3.obj',
   '/12927_WoodenChessQueenSideA_diffuse.jpg',
-  2.0,   // height in Three.js units
+  3.2,   // height in Three.js units (increased size)
   35,    // start off-screen right
   (pivot) => { queen = pivot; }
 );
@@ -281,8 +287,8 @@ loadOBJ(
 // ─── Scroll ───────────────────────────────────────────────────────────────────
 let scrollProgress = 0;
 window.addEventListener('scroll', () => {
-  // Calculate hero scroll progress (0 to 1) for board animation
-  scrollProgress = Math.min(window.scrollY / window.innerHeight, 1);
+  // Calculate hero scroll progress (0 to 1) for board animation over 150vh
+  scrollProgress = Math.min(window.scrollY / (window.innerHeight * 1.5), 1);
 
   // Navbar Pill logic
   const navbar = document.getElementById('navbar');
@@ -372,10 +378,11 @@ const tick = () => {
   if (board) {
     autoSpinY += delta * 0.15; // Slow circular motion
 
-    const targetRotY = scrollProgress * Math.PI + manualRotY + autoSpinY;
-    const targetBoardX = 8 - scrollProgress * 40;
-    const targetCamZ = 22 - scrollProgress * 10;
-    const targetCamY = 6 - scrollProgress * 2;
+    const targetRotY = manualRotY + autoSpinY + (scrollProgress * Math.PI * 0.5); // Spin slightly
+    const targetBoardX = 0; // Keep centered
+    // Start camera further away (smaller scene) and move in closer (larger) as we scroll
+    const targetCamZ = 35 - (scrollProgress * 13); // 35 down to 22
+    const targetCamY = 6;
 
     currentRotY += (targetRotY - currentRotY) * 0.06;
     currentBoardX += (targetBoardX - currentBoardX) * 0.06;
@@ -383,9 +390,22 @@ const tick = () => {
     currentCamY += (targetCamY - currentCamY) * 0.06;
 
     board.rotation.y = currentRotY;
-    board.rotation.x += (manualRotX - board.rotation.x) * 0.06;
+
+    // Update Board transforms
+    // Smoothly apply scroll rotation
+    let targetBoardRotX = Math.PI / 12 + scrollProgress * (Math.PI / 8);
+    // Combine scroll rotation with manual drag rotation
+    const totalRotX = targetBoardRotX + manualRotX;
+    
+    board.rotation.x += (totalRotX - board.rotation.x) * 0.06;
     board.position.x = currentBoardX;
-    board.position.y = Math.sin(elapsed * 1.2) * 0.12;
+    
+    // Sink the board out of view as we reach the spacer's end
+    let targetBoardY = Math.sin(elapsed * 1.2) * 0.12;
+    if (window.scrollY > window.innerHeight * 1.2) {
+       targetBoardY -= ((window.scrollY - window.innerHeight * 1.2) / window.innerHeight) * 60;
+    }
+    board.position.y += (targetBoardY - board.position.y) * 0.1;
 
     // Hover effect for individual parts
     raycaster.setFromCamera(mouse, camera);
@@ -399,99 +419,43 @@ const tick = () => {
       canvasBoard.style.cursor = 'default';
     }
 
+    // Scatter logic based on scrollProgress
+    const scatterEased = Math.pow(scrollProgress, 0.8);
+
     board.traverse((child) => {
       if (child.isMesh && child.material) {
         if (!child.userData.origEmissive) {
           child.userData.origEmissive = child.material.emissive ? child.material.emissive.clone() : new THREE.Color(0x000000);
-          child.userData.origPosY = child.position.y;
         }
-
-        // Reset all EXCEPT moving piece
-        if (child !== movingPiece) {
-          child.position.y += (child.userData.origPosY - child.position.y) * 0.1;
-        }
-
         if (child.material.emissive) {
           child.material.emissive.lerp(child.userData.origEmissive, 0.1);
         }
       }
     });
 
-    if (hoveredMesh && hoveredMesh.material && hoveredMesh.material.emissive) {
-      // Float the specific piece up slightly and make it glow
-      if (hoveredMesh !== movingPiece) {
-        hoveredMesh.position.y += ((hoveredMesh.userData.origPosY + 0.3) - hoveredMesh.position.y) * 0.2;
-      }
-      hoveredMesh.material.emissive.setHex(0x444444);
+    for (const p of playablePieces) {
+      if (!p.userData.initialPos) continue;
+      
+      // Interpolate position
+      p.position.lerpVectors(p.userData.initialPos, p.userData.scatterPos, scatterEased);
+      
+      // Interpolate rotation
+      const qStart = new THREE.Quaternion().setFromEuler(p.userData.initialRot);
+      const qEnd = new THREE.Quaternion().setFromEuler(p.userData.scatterRot);
+      qStart.slerp(qEnd, scatterEased);
+      p.setRotationFromQuaternion(qStart);
     }
 
-    // ── Automated Playing (Scripted Match) ─────────────────────────────────
-    if (validSquares.length > 0) {
-      if (!movingPiece) {
-        moveTimer -= delta;
-        if (moveTimer <= 0) {
-          if (currentMoveIndex >= chessSequence.length) {
-            // Match over! Reset pieces
-            for (const sq of validSquares) sq.occupant = null;
-            for (const piece of playablePieces) {
-              piece.position.copy(piece.userData.initialPos);
-              validSquares[piece.userData.squareIdx].occupant = piece;
-            }
-            currentMoveIndex = 0;
-            moveTimer = 2.0; // Wait before starting next game
-          } else {
-            // Play next move in script
-            const move = chessSequence[currentMoveIndex];
-            // Depending on camera angle, pieces might be mirrored, but it's consistent.
-            const fromIdx = move.from[1] * 8 + move.from[0];
-            const toIdx = move.to[1] * 8 + move.to[0];
-
-            const piece = validSquares[fromIdx].occupant;
-            if (piece) {
-              movingPiece = piece;
-              movingPiece.userData.origPos = piece.position.clone();
-              movingPiece.userData.targetPos = new THREE.Vector3(validSquares[toIdx].x, piece.position.y, validSquares[toIdx].z);
-              movingPiece.userData.moveProgress = 0;
-              movingPiece.userData.origPosY = piece.position.y;
-
-              // Update grid state instantly so logic is sound
-              validSquares[toIdx].occupant = piece;
-              validSquares[fromIdx].occupant = null;
-
-              currentMoveIndex++;
-              moveTimer = 0.5 + Math.random() * 0.5; // Pause between moves
-            } else {
-              // Failsafe: if piece not found, skip move
-              currentMoveIndex++;
-              moveTimer = 0.1;
-            }
-          }
-        }
-      } else {
-        // Animate the piece moving
-        movingPiece.userData.moveProgress += delta * 3.0; // Speed of movement
-        const p = Math.min(movingPiece.userData.moveProgress, 1);
-
-        movingPiece.position.x = THREE.MathUtils.lerp(movingPiece.userData.origPos.x, movingPiece.userData.targetPos.x, p);
-        movingPiece.position.z = THREE.MathUtils.lerp(movingPiece.userData.origPos.z, movingPiece.userData.targetPos.z, p);
-
-        // Parabolic jump arc
-        const jumpHeight = 1.5;
-        movingPiece.position.y = movingPiece.userData.origPosY + Math.sin(p * Math.PI) * jumpHeight;
-
-        if (p >= 1) {
-          movingPiece.position.y = movingPiece.userData.origPosY;
-          movingPiece = null;
-        }
-      }
+    if (hoveredMesh && hoveredMesh.material && hoveredMesh.material.emissive) {
+      hoveredMesh.material.emissive.setHex(0x444444);
     }
 
     camera.position.z = currentCamZ;
     camera.position.y = currentCamY;
     camera.lookAt(0, 0, 0);
 
-    // Hide board when scrolling past the hero section so it doesn't overflow!
-    if (window.scrollY > window.innerHeight * 0.8) {
+    // Hide board when scrolling past the spacer so it doesn't overflow!
+    if (window.scrollY > window.innerHeight * 2.5) {
       board.visible = false;
     } else {
       board.visible = true;
@@ -499,9 +463,10 @@ const tick = () => {
   }
 
   // ── Phase 2: King ─────────────────────────────────────────────────────────
-  // Enters much earlier as soon as user starts scrolling past hero (0.1 to 0.6 of innerHeight)
-  const p2Enter = Math.max(Math.min((window.scrollY - window.innerHeight * 0.1) / (window.innerHeight * 0.5), 1), 0);
-  const p2Exit = Math.max(Math.min((window.scrollY - window.innerHeight * 1.2) / (window.innerHeight * 0.5), 1), 0);
+  // Enters as user scrolls past spacer into the Strategy section (1.3 to 1.9 of innerHeight)
+  const p2Enter = Math.max(Math.min((window.scrollY - window.innerHeight * 1.3) / (window.innerHeight * 0.6), 1), 0);
+  // Exits as user scrolls past the Strategy section (2.4 to 3.0 of innerHeight)
+  const p2Exit = Math.max(Math.min((window.scrollY - window.innerHeight * 2.4) / (window.innerHeight * 0.6), 1), 0);
 
   if (king) {
     king.visible = true;
@@ -526,10 +491,10 @@ const tick = () => {
   }
 
   // ── Phase 3: Queen ────────────────────────────────────────────────────────
-  // Enters as soon as user hits the Command section (0.8 to 1.4 of innerHeight)
-  const p3Enter = Math.max(Math.min((window.scrollY - window.innerHeight * 1.2) / (window.innerHeight * 0.6), 1), 0);
-  // Exits as user scrolls past the Command section (1.8 to 2.3 of innerHeight)
-  const p3Exit = Math.max(Math.min((window.scrollY - window.innerHeight * 2.3) / (window.innerHeight * 0.5), 1), 0);
+  // Enters as user scrolls into the Command section (2.4 to 3.0 of innerHeight)
+  const p3Enter = Math.max(Math.min((window.scrollY - window.innerHeight * 2.4) / (window.innerHeight * 0.6), 1), 0);
+  // Exits as user scrolls past the Command section (3.4 to 4.0 of innerHeight)
+  const p3Exit = Math.max(Math.min((window.scrollY - window.innerHeight * 3.4) / (window.innerHeight * 0.6), 1), 0);
 
   if (queen) {
     queen.visible = true;
