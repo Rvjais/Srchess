@@ -22,7 +22,7 @@ if (gridContainer) {
       if ((col + row) % 2 === 0) {
         tile.style.backgroundColor = 'rgba(255, 255, 255, 0.5)'; // White tile
       } else {
-        tile.style.backgroundColor = 'rgba(212, 175, 55, 0.4)'; // Yellow/Gold tile
+        tile.style.backgroundColor = 'rgba(252, 215, 57, 0.34)'; // Brand yellow tile
       }
       gridContainer.appendChild(tile);
     }
@@ -34,7 +34,137 @@ if (gridContainer) {
   });
 }
 
-// ─── Scene ───────────────────────────────────────────────────────────────────
+// ─── Page UI: nav, reveals, count-up, chapter rail ───────────────────────────
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ── Mobile navigation ──
+const initNav = () => {
+  const toggle = document.getElementById('nav-toggle');
+  const links = document.getElementById('nav-links');
+  if (!toggle || !links) return;
+
+  const setOpen = (open) => {
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    links.classList.toggle('is-open', open);
+  };
+
+  toggle.addEventListener('click', () => {
+    setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+  });
+
+  // Close after navigating, and on Escape
+  links.addEventListener('click', (e) => {
+    if (e.target.closest('a')) setOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#navbar')) setOpen(false);
+  });
+
+  // Dropdown triggers are real buttons — make them work on tap too
+  links.querySelectorAll('.dropdown-trigger').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+    });
+  });
+};
+
+// ── Count-up, used by the Impact band ──
+const runCountUp = (el) => {
+  const target = parseFloat(el.dataset.countTo);
+  if (Number.isNaN(target)) return;
+  const decimals = parseInt(el.dataset.countDecimals || '0', 10);
+  if (REDUCED) { el.textContent = target.toFixed(decimals); return; }
+
+  const duration = 1600;
+  let start = null;
+  const step = (now) => {
+    if (start === null) start = now;
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = (target * eased).toFixed(decimals);
+    if (t < 1) window.requestAnimationFrame(step);
+  };
+  window.requestAnimationFrame(step);
+};
+
+// ── One IntersectionObserver drives every reveal on the page ──
+let revealStarted = false;
+function initReveal() {
+  if (revealStarted) return;
+  revealStarted = true;
+
+  const targets = document.querySelectorAll('[data-reveal]');
+
+  if (REDUCED || !('IntersectionObserver' in window)) {
+    targets.forEach((el) => {
+      el.classList.add('is-revealed');
+      el.querySelectorAll('[data-count-to]').forEach(runCountUp);
+    });
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const el = entry.target;
+      const group = el.closest('[data-reveal-group]');
+      let delay = 0;
+      if (group) {
+        const sibs = Array.from(group.querySelectorAll('[data-reveal]'));
+        delay = Math.min(sibs.indexOf(el) * 90, 540);
+      }
+      el.style.setProperty('--reveal-delay', delay + 'ms');
+      el.classList.add('is-revealed');
+      el.querySelectorAll('[data-count-to]').forEach(runCountUp);
+      io.unobserve(el);   // one-shot: keeps the main thread clear for the GL loop
+    }
+  }, { threshold: 0, rootMargin: '0px 0px -15% 0px' });
+
+  targets.forEach((el) => io.observe(el));
+  initChapterRail();
+}
+
+// ── Chapter rail: pawn promotes to king as you descend ──
+const initChapterRail = () => {
+  const rail = document.getElementById('chapter-rail');
+  if (!rail || !('IntersectionObserver' in window)) return;
+
+  const dots = Array.from(rail.querySelectorAll('.chapter-dot'));
+  const sections = dots
+    .map((dot) => document.getElementById(dot.dataset.chapter))
+    .filter(Boolean);
+  if (!sections.length) return;
+
+  const railObserver = new IntersectionObserver((entries) => {
+    // The rail only exists once the 3D sequence is done, so it never collides
+    // with the King resting at screen-left.
+    let anyVisible = false;
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      anyVisible = true;
+      dots.forEach((d) => d.classList.toggle('is-current', d.dataset.chapter === entry.target.id));
+    });
+    if (anyVisible) rail.classList.add('is-active');
+  }, { threshold: 0.25, rootMargin: '-40% 0px -40% 0px' });
+
+  sections.forEach((s) => railObserver.observe(s));
+
+  // Hide the rail again once we're back above the first chapter
+  const first = sections[0];
+  new IntersectionObserver(([entry]) => {
+    if (entry.boundingClientRect.top > 0 && !entry.isIntersecting) {
+      rail.classList.remove('is-active');
+    }
+  }, { threshold: 0 }).observe(first);
+};
+
+initNav();
+
 // ─── Scene ───────────────────────────────────────────────────────────────────
 const canvasBoard = document.querySelector('#webgl-board');
 const canvasPieces = document.querySelector('#webgl-pieces');
@@ -85,13 +215,26 @@ manager.onProgress = (url, itemsLoaded, itemsTotal) => {
     progressBar.style.width = (itemsLoaded / itemsTotal * 100) + '%';
   }
 };
-manager.onLoad = () => {
+const dismissLoader = () => {
   const loadingScreen = document.getElementById('loading-screen');
-  if (loadingScreen) {
+  if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
     loadingScreen.classList.add('hidden');
     setTimeout(() => { loadingScreen.style.display = 'none'; }, 800);
   }
 };
+
+manager.onLoad = () => {
+  dismissLoader();
+  // Reveals start only once the overlay is clearing — otherwise the first
+  // screen's animations play out of sight behind it.
+  setTimeout(initReveal, 400);
+};
+
+// The models are ~22MB of .obj. If one 404s, stalls, or WebGL is unavailable,
+// manager.onLoad never fires — and the page would sit behind a full-screen
+// overlay forever with every [data-reveal] element still hidden. Neither the
+// loader nor the content may be hostage to that.
+setTimeout(() => { dismissLoader(); initReveal(); }, 8000);
 
 const textureLoader = new THREE.TextureLoader(manager);
 const objLoader = new OBJLoader(manager);
@@ -234,33 +377,11 @@ gltfLoader.load('/ChessScene.glb', (gltf) => {
     }
   }
 
-  // Add Reset Button
+  // Add Reset Button — styling lives in .board-reset, not inline
   const resetBtn = document.createElement('button');
-  resetBtn.innerText = "Reset Board View";
-  resetBtn.style.position = 'absolute';
-  resetBtn.style.bottom = '40px'; // Sit just above the curve
-  resetBtn.style.left = '50%';
-  resetBtn.style.transform = 'translateX(-50%)';
-  resetBtn.style.zIndex = '10'; // Above the grid
-  resetBtn.style.padding = '12px 24px';
-  resetBtn.style.backgroundColor = 'var(--gold, #fcd739)'; // Match the new theme
-  resetBtn.style.color = '#111';
-  resetBtn.style.border = 'none';
-  resetBtn.style.borderRadius = '30px';
-  resetBtn.style.cursor = 'pointer';
-  resetBtn.style.pointerEvents = 'auto'; // Ensure it can be clicked despite parent pointer-events: none
-  resetBtn.style.fontWeight = '700';
-  resetBtn.style.boxShadow = '0 4px 14px rgba(212, 175, 55, 0.3)';
-
-  // Hover effect for the button
-  resetBtn.addEventListener('mouseenter', () => {
-    resetBtn.style.transform = 'translateX(-50%) translateY(-2px)';
-    resetBtn.style.boxShadow = '0 6px 18px rgba(212, 175, 55, 0.5)';
-  });
-  resetBtn.addEventListener('mouseleave', () => {
-    resetBtn.style.transform = 'translateX(-50%)';
-    resetBtn.style.boxShadow = '0 4px 14px rgba(212, 175, 55, 0.3)';
-  });
+  resetBtn.type = 'button';
+  resetBtn.className = 'board-reset';
+  resetBtn.textContent = 'Reset Board View';
 
   const heroWrapper = document.querySelector('.hero-content-wrapper');
   if (heroWrapper) {
@@ -467,44 +588,96 @@ if (document.readyState === 'loading') {
   initTestimonialCarousel();
 }
 
-// ─── Scroll ───────────────────────────────────────────────────────────────────
+// ─── Phase measurement ────────────────────────────────────────────────────────
+// The King/Queen choreography used to be pinned to hardcoded multiples of
+// window.innerHeight. That desynced as soon as a section's real height differed
+// from the assumption — on a 1366x768 laptop the Strategy card overflows 100vh,
+// which pushed the Queen's card past her exit trigger entirely. Measuring the
+// sections instead makes the animation independent of layout.
+const phases = {
+  boardEnd: 0,   // scroll distance over which the board scatters
+  kingIn: 0, kingHold: 0, kingOut: 0,
+  queenIn: 0, queenHold: 0, queenOut: 0,
+  boardHide: 0,
+};
+
+const measurePhases = () => {
+  const vh = window.innerHeight;
+  const docTop = (el) => (el ? el.getBoundingClientRect().top + window.scrollY : 0);
+
+  const spacer   = document.querySelector('.section-board-animation');
+  const strategy = document.getElementById('strategy');
+  const queen    = document.getElementById('queen');
+
+  // Board scatters across the dedicated spacer section.
+  const spacerTop = docTop(spacer);
+  const spacerH = spacer ? spacer.offsetHeight : vh * 1.5;
+  phases.boardEnd = Math.max(spacerTop + spacerH - vh * 0.5, vh);
+
+  // Each piece slides in as its card approaches the middle of the viewport and
+  // leaves as the card exits, using the card's own measured position.
+  const sTop = docTop(strategy);
+  const sH   = strategy ? strategy.offsetHeight : vh;
+  phases.kingIn   = sTop - vh * 0.9;
+  phases.kingHold = sTop - vh * 0.15;
+  phases.kingOut  = sTop + sH - vh * 0.5;
+
+  const qTop = docTop(queen);
+  const qH   = queen ? queen.offsetHeight : vh;
+  phases.queenIn   = qTop - vh * 0.9;
+  phases.queenHold = qTop - vh * 0.15;
+  phases.queenOut  = qTop + qH - vh * 0.5;
+
+  phases.boardHide = phases.kingHold;
+};
+
+// 0 → 1 ramp between two scroll positions
+const ramp = (y, from, to) => {
+  if (to <= from) return y >= to ? 1 : 0;
+  return Math.max(0, Math.min((y - from) / (to - from), 1));
+};
+
+// ─── Scroll (rAF-throttled: the raw handler ran layout reads every event) ─────
 let scrollProgress = 0;
-window.addEventListener('scroll', () => {
-  // Calculate hero scroll progress (0 to 1) for board animation over 150vh
-  scrollProgress = Math.min(window.scrollY / (window.innerHeight * 1.5), 1);
+let scrollY = 0;
+let scrollQueued = false;
 
-  // Navbar Pill logic
+const onScroll = () => {
+  scrollY = window.scrollY;
+  scrollProgress = phases.boardEnd ? Math.min(scrollY / phases.boardEnd, 1) : 0;
+
+  // Navbar pill → full-width bar
   const navbar = document.getElementById('navbar');
-  if (navbar) {
-    if (window.scrollY > 50) {
-      navbar.classList.add('expanded');
-    } else {
-      navbar.classList.remove('expanded');
-    }
-  }
+  if (navbar) navbar.classList.toggle('expanded', scrollY > 50);
 
-  // Fade out the grid background when scrolling past hero
+  // Fade out the gold grid floor once the hero is behind us
   const gridElement = document.querySelector('#grid-trail-container');
-  if (window.scrollY > window.innerHeight * 0.5) {
-    const overflow = window.scrollY - (window.innerHeight * 0.5);
-    const fadeOut = Math.max(0, 1 - (overflow / (window.innerHeight * 0.3)));
-    if (gridElement) gridElement.style.opacity = fadeOut;
-  } else {
-    if (gridElement) gridElement.style.opacity = 1;
+  if (gridElement) {
+    const vh = window.innerHeight;
+    if (scrollY > vh * 0.5) {
+      const overflow = scrollY - vh * 0.5;
+      gridElement.style.opacity = Math.max(0, 1 - overflow / (vh * 0.3));
+    } else {
+      gridElement.style.opacity = 1;
+    }
   }
 
-  // Trigger floating stats animation
-  const stats = document.querySelectorAll('.floating-stat');
-  stats.forEach((stat, idx) => {
-    if (scrollProgress > 0.4 + (idx * 0.15)) {
-      stat.classList.add('visible');
-    } else {
-      stat.classList.remove('visible');
-    }
+  // Floating stats around the board
+  document.querySelectorAll('.floating-stat').forEach((stat, idx) => {
+    stat.classList.toggle('visible', scrollProgress > 0.4 + idx * 0.15);
   });
-});
+
+  scrollQueued = false;
+};
+
+window.addEventListener('scroll', () => {
+  if (scrollQueued) return;
+  scrollQueued = true;
+  window.requestAnimationFrame(onScroll);
+}, { passive: true });
 
 // ─── Resize ───────────────────────────────────────────────────────────────────
+let resizeTimer;
 window.addEventListener('resize', () => {
   sizes.width = window.innerWidth;
   sizes.height = window.innerHeight;
@@ -512,7 +685,14 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   rendererBoard.setSize(sizes.width, sizes.height);
   rendererPieces.setSize(sizes.width, sizes.height);
+
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { measurePhases(); onScroll(); }, 150);
 });
+
+measurePhases();
+onScroll();
+window.addEventListener('load', () => { measurePhases(); onScroll(); });
 
 // ─── Raycaster & Interaction ──────────────────────────────────────────────────
 const raycaster = new THREE.Raycaster();
@@ -523,7 +703,15 @@ let previousMousePosition = { x: 0, y: 0 };
 let manualRotY = 0;
 let manualRotX = 0;
 
-window.addEventListener('mousedown', () => { isDragging = true; });
+// Drag rotates the board, but only from empty space in the hero. Previously any
+// mousedown anywhere — a nav link, a button, a form field — started a rotation.
+// The canvas stays pointer-events:none so it never swallows clicks; instead we
+// ignore mousedowns that landed on real UI.
+const NON_DRAG_TARGET = 'a, button, input, select, textarea, label, .glass-panel, .glass-card, .navbar, .social-sidebar, .chapter-rail';
+window.addEventListener('mousedown', (event) => {
+  if (event.target.closest && event.target.closest(NON_DRAG_TARGET)) return;
+  isDragging = true;
+});
 window.addEventListener('mouseup', () => { isDragging = false; });
 window.addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -595,8 +783,8 @@ const tick = () => {
     
     // Sink the board out of view as we reach the spacer's end
     let targetBoardY = Math.sin(elapsed * 1.2) * 0.12;
-    if (window.scrollY > window.innerHeight * 1.2) {
-       targetBoardY -= ((window.scrollY - window.innerHeight * 1.2) / window.innerHeight) * 60;
+    if (scrollY > phases.boardEnd * 0.8) {
+       targetBoardY -= ((scrollY - phases.boardEnd * 0.8) / window.innerHeight) * 60;
     }
     board.position.y += (targetBoardY - board.position.y) * 0.1;
 
@@ -643,19 +831,13 @@ const tick = () => {
     camera.position.y = currentCamY;
     camera.lookAt(0, 0, 0);
 
-    // Hide board when scrolling past the spacer so it doesn't overflow!
-    if (window.scrollY > window.innerHeight * 2.5) {
-      board.visible = false;
-    } else {
-      board.visible = true;
-    }
+    // Hide board once the King has taken over so it doesn't overflow
+    board.visible = scrollY < phases.boardHide;
   }
 
-  // ── Phase 2: King ─────────────────────────────────────────────────────────
-  // Enters as user scrolls past spacer into the Strategy section (1.3 to 1.9 of innerHeight)
-  const p2Enter = Math.max(Math.min((window.scrollY - window.innerHeight * 1.3) / (window.innerHeight * 0.6), 1), 0);
-  // Exits as user scrolls past the Strategy section (2.4 to 3.0 of innerHeight)
-  const p2Exit = Math.max(Math.min((window.scrollY - window.innerHeight * 2.4) / (window.innerHeight * 0.6), 1), 0);
+  // ── Phase 2: King — measured against the Strategy card's real position ────
+  const p2Enter = ramp(scrollY, phases.kingIn, phases.kingHold);
+  const p2Exit  = ramp(scrollY, phases.kingOut, phases.kingOut + window.innerHeight * 0.6);
 
   if (king) {
     king.visible = true;
@@ -679,11 +861,9 @@ const tick = () => {
     }
   }
 
-  // ── Phase 3: Queen ────────────────────────────────────────────────────────
-  // Enters as user scrolls into the Command section (2.4 to 3.0 of innerHeight)
-  const p3Enter = Math.max(Math.min((window.scrollY - window.innerHeight * 2.4) / (window.innerHeight * 0.6), 1), 0);
-  // Exits as user scrolls past the Command section (3.4 to 4.0 of innerHeight)
-  const p3Exit = Math.max(Math.min((window.scrollY - window.innerHeight * 3.4) / (window.innerHeight * 0.6), 1), 0);
+  // ── Phase 3: Queen — measured against the Queen card's real position ─────
+  const p3Enter = ramp(scrollY, phases.queenIn, phases.queenHold);
+  const p3Exit  = ramp(scrollY, phases.queenOut, phases.queenOut + window.innerHeight * 0.6);
 
   if (queen) {
     queen.visible = true;
