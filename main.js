@@ -20,9 +20,11 @@ if (gridContainer) {
       const row = Math.floor(i / cols);
       // White and Yellow checkerboard pattern
       if ((col + row) % 2 === 0) {
-        tile.style.backgroundColor = 'rgba(255, 255, 255, 0.5)'; // White tile
+        tile.style.backgroundColor = 'rgba(255, 255, 255, 0.45)'; // Light square
       } else {
-        tile.style.backgroundColor = 'rgba(252, 215, 57, 0.34)'; // Brand yellow tile
+        // Kept well below the brand yellow's full strength: at full saturation
+        // the floor competes with the hero panels and the 3D board.
+        tile.style.backgroundColor = 'rgba(252, 215, 57, 0.20)'; // Dark square
       }
       gridContainer.appendChild(tile);
     }
@@ -140,8 +142,11 @@ const initChapterRail = () => {
     .filter(Boolean);
   if (!sections.length) return;
 
+  // rootMargin shrinks the root to a band across the middle of the viewport;
+  // threshold MUST be 0, because a section taller than that band can never have
+  // a positive ratio of itself inside it.
   const railObserver = new IntersectionObserver((entries) => {
-    // The rail only exists once the 3D sequence is done, so it never collides
+    // The rail only appears once the 3D sequence is done, so it never collides
     // with the King resting at screen-left.
     let anyVisible = false;
     entries.forEach((entry) => {
@@ -150,7 +155,7 @@ const initChapterRail = () => {
       dots.forEach((d) => d.classList.toggle('is-current', d.dataset.chapter === entry.target.id));
     });
     if (anyVisible) rail.classList.add('is-active');
-  }, { threshold: 0.25, rootMargin: '-40% 0px -40% 0px' });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
 
   sections.forEach((s) => railObserver.observe(s));
 
@@ -696,7 +701,13 @@ window.addEventListener('load', () => { measurePhases(); onScroll(); });
 
 // ─── Raycaster & Interaction ──────────────────────────────────────────────────
 const raycaster = new THREE.Raycaster();
+// Parked off-screen so the raycaster hits nothing before the first real move.
 const mouse = new THREE.Vector2(-100, -100);
+// Separate vector for the King/Queen parallax. It must start at ZERO: the
+// pieces multiply it into their rest position, so reusing `mouse` put them at
+// x = -185, y = -52 — off-screen — until the user happened to move the pointer,
+// and permanently off-screen on touch devices, where mousemove never fires.
+const parallax = new THREE.Vector2(0, 0);
 
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
@@ -716,6 +727,7 @@ window.addEventListener('mouseup', () => { isDragging = false; });
 window.addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  parallax.set(mouse.x, mouse.y);
 
   // Only allow dragging if we are in the hero section
   if (isDragging && window.scrollY < window.innerHeight) {
@@ -842,14 +854,14 @@ const tick = () => {
   if (king) {
     king.visible = true;
     // Base target position with mouse parallax offset
-    const targetKingX = -35 + (p2Enter - p2Exit) * (35 + KING_REST_X) + (mouse.x * 1.5);
+    const targetKingX = -35 + (p2Enter - p2Exit) * (35 + KING_REST_X) + (parallax.x * 1.5);
     currentKingX += (targetKingX - currentKingX) * 0.06;
     king.position.x = currentKingX;
-    king.position.y = (Math.sin(elapsed * 1.5) * 0.08 - 2) + (mouse.y * 0.5);
+    king.position.y = (Math.sin(elapsed * 1.5) * 0.08 - 2) + (parallax.y * 0.5);
 
     // Interactive rotation (look at mouse)
-    king.rotation.y += (mouse.x * 1.2 - king.rotation.y) * 0.1;
-    king.rotation.x += (-mouse.y * 0.5 - king.rotation.x) * 0.1;
+    king.rotation.y += (parallax.x * 1.2 - king.rotation.y) * 0.1;
+    king.rotation.x += (-parallax.y * 0.5 - king.rotation.x) * 0.1;
 
     // Camera reset toward neutral as pieces enter
     if (p2Enter > 0) {
@@ -868,14 +880,14 @@ const tick = () => {
   if (queen) {
     queen.visible = true;
     // Base target position with mouse parallax offset
-    const targetQueenX = 35 - (p3Enter - p3Exit) * (35 - QUEEN_REST_X) + (mouse.x * 1.5);
+    const targetQueenX = 35 - (p3Enter - p3Exit) * (35 - QUEEN_REST_X) + (parallax.x * 1.5);
     currentQueenX += (targetQueenX - currentQueenX) * 0.06;
     queen.position.x = currentQueenX;
-    queen.position.y = (Math.sin(elapsed * 1.5 + Math.PI) * 0.08 - 2) + (mouse.y * 0.5);
+    queen.position.y = (Math.sin(elapsed * 1.5 + Math.PI) * 0.08 - 2) + (parallax.y * 0.5);
 
     // Interactive rotation (look at mouse)
-    queen.rotation.y += (mouse.x * 1.2 - queen.rotation.y) * 0.1;
-    queen.rotation.x += (-mouse.y * 0.5 - queen.rotation.x) * 0.1;
+    queen.rotation.y += (parallax.x * 1.2 - queen.rotation.y) * 0.1;
+    queen.rotation.x += (-parallax.y * 0.5 - queen.rotation.x) * 0.1;
   }
 
   rendererBoard.render(sceneBoard, camera);

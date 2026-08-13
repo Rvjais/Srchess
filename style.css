@@ -208,7 +208,28 @@ img { max-width: 100%; }
 .footer-section.band--seam::before { color: var(--navy-950); }
 
 /* ─── Type primitives ─────────────────────────────────────────────────────── */
-.accent-text { color: var(--gold-700); }
+/* On light, the brand yellow cannot be text (1.4:1). Rather than settle for a
+   muddy dark-olive, the accent word keeps navy text (17:1) and carries the
+   yellow as a highlighter swash behind it — full-strength brand colour, no
+   legibility cost. On navy the yellow is simply the text colour. */
+.accent-text {
+  color: var(--navy-900);
+  background-image: linear-gradient(var(--gold-500), var(--gold-500));
+  background-repeat: no-repeat;
+  background-position: 0 94%;
+  background-size: 100% 0.28em;
+  padding-inline: 0.08em;
+  -webkit-box-decoration-break: clone;
+          box-decoration-break: clone;
+}
+.band--navy .accent-text,
+.glass-card .accent-text,
+.footer-section .accent-text,
+.tc-slide .accent-text {
+  color: var(--gold-500);
+  background-image: none;
+  padding-inline: 0;
+}
 
 .eyebrow {
   display: inline-block;
@@ -252,16 +273,7 @@ img { max-width: 100%; }
   color: var(--navy-900);
   margin-bottom: var(--space-4);
 }
-.section-head .section-title::after {
-  content: '';
-  display: block;
-  width: 56px; height: 3px;
-  background: var(--gold-500);
-  border-radius: 2px;
-  margin: var(--space-5) auto 0;
-}
 .section-title--left { text-align: left; }
-.section-title--left::after { margin-inline: 0; }
 .section-lead {
   font-size: var(--fs-lead);
   line-height: var(--lh-relaxed);
@@ -282,11 +294,13 @@ img { max-width: 100%; }
 .band--navy .chapter-mark,
 .glass-card .chapter-mark { color: var(--gold-500); }
 
+/* Body font, not Cinzel: Cinzel is an all-capitals display face, which turns a
+   full sentence into an unreadable block of caps. */
 .pull-quote {
-  font-family: var(--font-serif);
   font-style: italic;
+  font-weight: 500;
   font-size: var(--fs-lead);
-  line-height: var(--lh-snug);
+  line-height: var(--lh-normal);
   color: var(--navy-900);
   border-left: 3px solid var(--gold-500);
   padding-left: var(--space-5);
@@ -706,6 +720,8 @@ img { max-width: 100%; }
 .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ─── Chapter rail (left edge) ────────────────────────────────────────────── */
+/* Sits on a glass pill so it reads the same over cream and navy bands — it is
+   fixed, so it crosses both. */
 .chapter-rail {
   position: fixed;
   left: 1.25rem;
@@ -714,38 +730,59 @@ img { max-width: 100%; }
   z-index: 95;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-md);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--dur-slow) ease;
 }
 .chapter-rail.is-active { opacity: 1; pointer-events: auto; }
 .chapter-dot {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  justify-content: center;
+  width: 38px; height: 38px;
+  border-radius: 50%;
   text-decoration: none;
-  color: rgba(10, 25, 47, 0.28);
-  font-size: 1.05rem;
+  color: var(--slate-500);
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 1.15rem;
   line-height: 1;
-  transition: color var(--dur-base) ease, transform var(--dur-base) var(--ease-out);
+  transition: color var(--dur-base) ease, background var(--dur-base) ease,
+              transform var(--dur-base) var(--ease-out);
 }
-.chapter-dot:hover { color: var(--gold-700); }
+.chapter-dot:hover { color: var(--navy-900); transform: scale(1.08); }
 .chapter-dot.is-current {
-  color: var(--gold-700);
-  transform: scale(1.3);
+  color: var(--navy-900);
+  background: var(--gold-500);
 }
+/* Label flies out on hover rather than sitting in the rail */
 .chapter-name {
+  position: absolute;
+  left: calc(100% + 10px);
   font-size: 0.6rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+  color: var(--navy-900);
+  background: var(--gold-500);
+  padding: 5px 9px;
+  border-radius: var(--r-xs);
   opacity: 0;
   transform: translateX(-6px);
   transition: opacity var(--dur-base) ease, transform var(--dur-base) var(--ease-out);
   white-space: nowrap;
+  pointer-events: none;
 }
-.chapter-dot:hover .chapter-name { opacity: 1; transform: translateX(0); }
+.chapter-dot:hover .chapter-name,
+.chapter-dot:focus-visible .chapter-name { opacity: 1; transform: translateX(0); }
 
 /* ─── Hero ────────────────────────────────────────────────────────────────── */
 .section { position: relative; z-index: 1; }
@@ -1480,8 +1517,8 @@ img { max-width: 100%; }
   pointer-events: none;
 }
 .tc-quote {
-  font-family: var(--font-serif);
   font-size: var(--fs-h4);
+  font-weight: 500;
   line-height: var(--lh-relaxed);
   font-style: italic;
   color: var(--text-on-dark);
@@ -1737,6 +1774,12 @@ img { max-width: 100%; }
 .footer-bottom a { color: var(--gold-500); font-weight: 700; text-decoration: none; }
 
 /* ═══ Responsive ══════════════════════════════════════════════════════════ */
+
+/* The rail is fixed at the left edge; below this width it would start to
+   collide with the container's own left edge. */
+@media (max-width: 1280px) {
+  .chapter-rail { display: none; }
+}
 
 @media (max-width: 1100px) {
   .footer-grid { grid-template-columns: 1.4fr 1fr 1fr; row-gap: var(--space-8); }
