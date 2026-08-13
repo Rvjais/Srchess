@@ -14,8 +14,17 @@
   <body>
     <div id="loading-screen">
       <div class="loader-content">
-        <div class="chess-spinner"></div>
-        <h2>Loading the Board...</h2>
+        <div class="solar-system-loader">
+          <div class="sun-logo">
+            <img src="/frontend/assets/srcamain/images/logo-black03.png" alt="SRCA Logo">
+          </div>
+          <div class="orbit orbit-1"><i class="fas fa-chess-pawn orbit-piece"></i></div>
+          <div class="orbit orbit-2"><i class="fas fa-chess-knight orbit-piece"></i></div>
+          <div class="orbit orbit-3"><i class="fas fa-chess-bishop orbit-piece"></i></div>
+          <div class="orbit orbit-4"><i class="fas fa-chess-rook orbit-piece"></i></div>
+          <div class="orbit orbit-5"><i class="fas fa-chess-queen orbit-piece"></i></div>
+        </div>
+        <h2 style="margin-top: 2rem;">Loading the Board...</h2>
         <div class="progress-bar-container">
           <div id="loading-progress" class="progress-bar"></div>
         </div>
@@ -98,6 +107,21 @@
       <div class="animation-text-left glass-panel-small">
         <h3 style="color: var(--navy-deep); margin-bottom: 0; font-size: 2rem;">Unleash Your <br><span class="gradient-text">Potential</span></h3>
       </div>
+      
+      <!-- New Floating Stats around the board -->
+      <div class="floating-stat stat-1">
+        <h4>318+</h4>
+        <span>Billion Openings</span>
+      </div>
+      <div class="floating-stat stat-2">
+        <h4>Infinite</h4>
+        <span>Strategies</span>
+      </div>
+      <div class="floating-stat stat-3">
+        <h4>1 Goal</h4>
+        <span>Checkmate</span>
+      </div>
+
       <div class="animation-text-right glass-panel-small">
         <p style="color: var(--text-sub); font-weight: 500; margin-bottom: 0; font-size: 1.1rem;">Every piece tells a story. Master the strategies that separate champions from beginners.</p>
       </div>
@@ -238,31 +262,68 @@
         <h2>Chess Learning Levels</h2>
         <p>Start with the basics, advance through strategy and tactics, and refine endgame skills.</p>
       </div>
-      <div class="flex-center-grid">
-        <div class="level-card">
-          <div class="level-number">1</div>
-          <h4>Freshers</h4>
-          <p>Laying the groundwork for a bright future!</p>
+      <div class="levels-split">
+        <div class="levels-left">
+          <div class="levels-stack">
+            <div class="level-row">
+              <div class="level-number">1</div>
+              <div class="level-body">
+                <h4>Freshers</h4>
+                <p>Laying the groundwork for a bright future!</p>
+              </div>
+              <div class="level-meter" aria-hidden="true"><span class="level-pip is-on"></span><span class="level-pip"></span><span class="level-pip"></span><span class="level-pip"></span><span class="level-pip"></span></div>
+            </div>
+            <div class="level-row">
+              <div class="level-number">2</div>
+              <div class="level-body">
+                <h4>Beginners</h4>
+                <p>Building confidence with every step forward!</p>
+              </div>
+              <div class="level-meter" aria-hidden="true"><span class="level-pip is-on"></span><span class="level-pip is-on"></span><span class="level-pip"></span><span class="level-pip"></span><span class="level-pip"></span></div>
+            </div>
+            <div class="level-row">
+              <div class="level-number">3</div>
+              <div class="level-body">
+                <h4>Advanced Beginners</h4>
+                <p>Refining skills and enhancing strategies!</p>
+              </div>
+              <div class="level-meter" aria-hidden="true"><span class="level-pip is-on"></span><span class="level-pip is-on"></span><span class="level-pip is-on"></span><span class="level-pip"></span><span class="level-pip"></span></div>
+            </div>
+            <div class="level-row">
+              <div class="level-number">4</div>
+              <div class="level-body">
+                <h4>Intermediate</h4>
+                <p>Honing expertise for consistent growth!</p>
+              </div>
+              <div class="level-meter" aria-hidden="true"><span class="level-pip is-on"></span><span class="level-pip is-on"></span><span class="level-pip is-on"></span><span class="level-pip is-on"></span><span class="level-pip"></span></div>
+            </div>
+            <div class="level-row">
+              <div class="level-number">5</div>
+              <div class="level-body">
+                <h4>Advanced</h4>
+                <p>Pushing boundaries to achieve excellence!</p>
+              </div>
+              <div class="level-meter" aria-hidden="true"><span class="level-pip is-on"></span><span class="level-pip is-on"></span><span class="level-pip is-on"></span><span class="level-pip is-on"></span><span class="level-pip is-on"></span></div>
+            </div>
+          </div>
         </div>
-        <div class="level-card">
-          <div class="level-number">2</div>
-          <h4>Beginners</h4>
-          <p>Building confidence with every step forward!</p>
-        </div>
-        <div class="level-card">
-          <div class="level-number">3</div>
-          <h4>Advanced Beginners</h4>
-          <p>Refining skills and enhancing strategies!</p>
-        </div>
-        <div class="level-card">
-          <div class="level-number">4</div>
-          <h4>Intermediate</h4>
-          <p>Honing expertise for consistent growth!</p>
-        </div>
-        <div class="level-card">
-          <div class="level-number">5</div>
-          <h4>Advanced</h4>
-          <p>Pushing boundaries to achieve excellence!</p>
+
+        <div class="levels-right">
+          <div class="levels-thoughts" style="text-align: left; padding: 2rem 0;">
+            <h3 style="font-family: var(--font-serif); font-size: 2.2rem; color: var(--navy-deep); margin-bottom: 1.5rem;">The Journey to Mastery</h3>
+            <p style="color: var(--text-sub); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1.5rem;">
+              Mastering chess is not an overnight achievement; it is a profound journey of intellectual growth. Each level represents a significant milestone in developing strategic foresight, emotional resilience, and the ability to think critically under pressure. 
+            </p>
+            <p style="color: var(--text-sub); line-height: 1.8; font-size: 1.05rem; margin-bottom: 2rem;">
+              From understanding the fundamental movements of the pieces to orchestrating complex, multi-layered attacks, our structured pathway ensures that every student builds a solid foundation before advancing to high-level tournament play.
+            </p>
+            
+            <div class="quote-block" style="border-left: 3px solid var(--gold-royal); padding-left: 1.5rem; font-style: italic; color: var(--navy-deep); font-weight: 500; font-size: 1.1rem; line-height: 1.6;">
+              "Every chess master was once a beginner. The difference between a master and a beginner is that the master has failed more times than the beginner has even tried."
+            </div>
+            
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSe5fcFC-x55EoULoYVaz39GYwpcJ-IYfuPqZSr0uEb9qUJceg/viewform" target="_blank" class="btn-primary" style="display: inline-block; margin-top: 2.5rem;">Start Your Training</a>
+          </div>
         </div>
       </div>
     </section>
@@ -334,24 +395,63 @@
         <h2>Testimonials</h2>
         <p>Hear from our students and parents about their journey with SRCA.</p>
       </div>
-      <div class="flex-center-grid">
-        <div class="testimonial-card">
-          <img src="/frontend/assets/srcamain/images/Aradhya.webp" alt="Aradhya" class="testimonial-img">
-          <h4>Aradhya</h4>
-          <span>Student</span>
-          <p>"SRCA’s care and planning are amazing. My child’s confidence and chess skills have grown so much since joining the academy."</p>
+      <div class="testimonial-carousel" data-autoplay="7000" aria-roledescription="carousel" aria-label="Student testimonials">
+        <button class="tc-arrow tc-prev" type="button" aria-label="Previous testimonial">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <div class="tc-viewport">
+          <div class="tc-track">
+            <article class="tc-slide" aria-roledescription="slide" aria-label="1 of 3">
+              <span class="tc-mark" aria-hidden="true">&ldquo;</span>
+              <div class="tc-avatar">
+                <img src="/frontend/assets/srcamain/images/Aradhya.webp" alt="Aradhya">
+              </div>
+              <p class="tc-quote">SRCA’s care and planning are amazing. My child’s confidence and chess skills have grown so much since joining the academy.</p>
+              <div class="tc-piece" aria-hidden="true">&#9819;</div>
+              <h4 class="tc-name">Aradhya</h4>
+              <span class="tc-role">Student</span>
+            </article>
+
+            <article class="tc-slide" aria-roledescription="slide" aria-label="2 of 3">
+              <span class="tc-mark" aria-hidden="true">&ldquo;</span>
+              <div class="tc-avatar">
+                <img src="/frontend/assets/srcamain/images/nanaki.webp" alt="Nanaki">
+              </div>
+              <p class="tc-quote">SRCA doesn’t just teach chess, they help with personal growth too. My child is now more focused, confident, and disciplined.</p>
+              <div class="tc-piece" aria-hidden="true">&#9822;</div>
+              <h4 class="tc-name">Nanaki</h4>
+              <span class="tc-role">Student</span>
+            </article>
+
+            <article class="tc-slide" aria-roledescription="slide" aria-label="3 of 3">
+              <span class="tc-mark" aria-hidden="true">&ldquo;</span>
+              <div class="tc-avatar">
+                <img src="/frontend/assets/srcamain/images/yumna.webp" alt="Yumna">
+              </div>
+              <p class="tc-quote">The coaches at SRCA are truly exceptional. My child not only improved in chess but also gained valuable life skills.</p>
+              <div class="tc-piece" aria-hidden="true">&#9817;</div>
+              <h4 class="tc-name">Yumna</h4>
+              <span class="tc-role">Student</span>
+            </article>
+          </div>
+          <div class="tc-progress" aria-hidden="true"><span></span></div>
         </div>
-        <div class="testimonial-card">
-          <img src="/frontend/assets/srcamain/images/nanaki.webp" alt="Nanaki" class="testimonial-img">
-          <h4>Nanaki</h4>
-          <span>Student</span>
-          <p>"SRCA doesn’t just teach chess, they help with personal growth too. My child is now more focused, confident, and disciplined."</p>
-        </div>
-        <div class="testimonial-card">
-          <img src="/frontend/assets/srcamain/images/yumna.webp" alt="Yumna" class="testimonial-img">
-          <h4>Yumna</h4>
-          <span>Student</span>
-          <p>"The coaches at SRCA are truly exceptional. My child not only improved in chess but also gained valuable life skills."</p>
+
+        <button class="tc-arrow tc-next" type="button" aria-label="Next testimonial">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <div class="tc-thumbs" role="tablist" aria-label="Choose a testimonial">
+          <button class="tc-thumb" type="button" role="tab" aria-label="Testimonial from Aradhya">
+            <img src="/frontend/assets/srcamain/images/Aradhya.webp" alt="" aria-hidden="true">
+          </button>
+          <button class="tc-thumb" type="button" role="tab" aria-label="Testimonial from Nanaki">
+            <img src="/frontend/assets/srcamain/images/nanaki.webp" alt="" aria-hidden="true">
+          </button>
+          <button class="tc-thumb" type="button" role="tab" aria-label="Testimonial from Yumna">
+            <img src="/frontend/assets/srcamain/images/yumna.webp" alt="" aria-hidden="true">
+          </button>
         </div>
       </div>
     </section>

@@ -310,6 +310,163 @@ loadOBJ(
   (pivot) => { queen = pivot; }
 );
 
+// ─── Testimonials Carousel ────────────────────────────────────────────────────
+// Autoplaying card deck: the active testimonial sits in front, its two
+// neighbours peek out behind it and can be clicked to come forward. Swipe/drag,
+// arrow keys, avatar thumbnails and a progress line. Pauses on hover, focus,
+// tab-hide and when scrolled off-screen.
+const initTestimonialCarousel = () => {
+  const root = document.querySelector('.testimonial-carousel');
+  if (!root) return;
+
+  const track    = root.querySelector('.tc-track');
+  const slides   = Array.from(root.querySelectorAll('.tc-slide'));
+  const thumbs   = Array.from(root.querySelectorAll('.tc-thumb'));
+  const bar      = root.querySelector('.tc-progress span');
+  const viewport = root.querySelector('.tc-viewport');
+  if (!track || slides.length === 0) return;
+
+  const reduced  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const duration = Number(root.dataset.autoplay) || 7000;
+  root.style.setProperty('--tc-duration', `${duration}ms`);
+
+  let index = 0;
+  let elapsed = 0;
+  let lastTime = 0;
+  let hovered = false;
+  let focused = false;
+  let onScreen = true;
+  let dragDelta = 0;
+
+  const isPaused = () => hovered || focused || !onScreen || document.hidden || reduced;
+
+  // The deck itself never travels — only the drag nudges it sideways.
+  const render = (offsetPx = 0) => {
+    track.style.transform = offsetPx ? `translateX(${offsetPx}px)` : '';
+  };
+
+  const goTo = (next) => {
+    const total = slides.length;
+    index = (next + total) % total;
+    render();
+    slides.forEach((slide, i) => {
+      // 0 = front card, 1 = the one peeking out on the right, total-1 = on the left
+      const rel = (i - index + total) % total;
+      slide.classList.toggle('is-active', rel === 0);
+      slide.classList.toggle('is-next', rel === 1 && total > 1);
+      slide.classList.toggle('is-prev', rel === total - 1 && total > 2);
+      slide.setAttribute('aria-hidden', rel === 0 ? 'false' : 'true');
+    });
+    thumbs.forEach((thumb, i) => {
+      thumb.classList.toggle('is-active', i === index);
+      thumb.setAttribute('aria-selected', i === index ? 'true' : 'false');
+      thumb.tabIndex = i === index ? 0 : -1;
+    });
+    // Restart the progress line from zero (reflow forces the animation to replay)
+    if (bar) {
+      bar.classList.remove('is-running');
+      void bar.offsetWidth;
+      bar.classList.add('is-running');
+    }
+    elapsed = 0;
+  };
+
+  // ── Controls ──
+  const prev = root.querySelector('.tc-prev');
+  const next = root.querySelector('.tc-next');
+  if (prev) prev.addEventListener('click', () => goTo(index - 1));
+  if (next) next.addEventListener('click', () => goTo(index + 1));
+  thumbs.forEach((thumb, i) => thumb.addEventListener('click', () => goTo(i)));
+
+  // Clicking a card peeking out from behind brings it to the front
+  slides.forEach((slide, i) => slide.addEventListener('click', () => {
+    if (i === index || Math.abs(dragDelta) > 6) return;
+    goTo(i);
+  }));
+
+  root.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(index - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); goTo(index + 1); }
+  });
+
+  // ── Pause conditions ──
+  const setPausedClass = () => root.classList.toggle('tc-carousel-paused', isPaused());
+  root.addEventListener('mouseenter', () => { hovered = true;  setPausedClass(); });
+  root.addEventListener('mouseleave', () => { hovered = false; setPausedClass(); });
+  root.addEventListener('focusin',    () => { focused = true;  setPausedClass(); });
+  root.addEventListener('focusout', (e) => {
+    // Ignore focus moving between the carousel's own controls
+    if (root.contains(e.relatedTarget)) return;
+    focused = false;
+    setPausedClass();
+  });
+  document.addEventListener('visibilitychange', setPausedClass);
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      onScreen = entries[0].isIntersecting;
+      setPausedClass();
+    }, { threshold: 0.25 }).observe(root);
+  }
+
+  // ── Drag / swipe ──
+  if (viewport) {
+    let startX = 0;
+    let dragging = false;
+
+    viewport.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      startX = e.clientX;
+      dragDelta = 0;
+      track.classList.add('no-anim');
+      viewport.classList.add('is-dragging');
+      viewport.setPointerCapture(e.pointerId);
+    });
+
+    viewport.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      dragDelta = e.clientX - startX;
+      render(dragDelta * 0.5);   // the whole deck follows the finger, softened
+    });
+
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      track.classList.remove('no-anim');
+      viewport.classList.remove('is-dragging');
+      const threshold = Math.min(120, viewport.clientWidth * 0.15);
+      if (dragDelta > threshold) goTo(index - 1);
+      else if (dragDelta < -threshold) goTo(index + 1);
+      else render();
+    };
+    viewport.addEventListener('pointerup', endDrag);
+    viewport.addEventListener('pointercancel', endDrag);
+    viewport.addEventListener('pointerleave', endDrag);
+  }
+
+  window.addEventListener('resize', () => render());
+
+  // ── Autoplay (rAF so it stays in sync with the paused progress line) ──
+  const step = (time) => {
+    const dt = lastTime ? time - lastTime : 0;
+    lastTime = time;
+    if (!isPaused()) {
+      elapsed += dt;
+      if (elapsed >= duration) goTo(index + 1);
+    }
+    window.requestAnimationFrame(step);
+  };
+
+  goTo(0);
+  if (!reduced) window.requestAnimationFrame(step);
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initTestimonialCarousel);
+} else {
+  initTestimonialCarousel();
+}
+
 // ─── Scroll ───────────────────────────────────────────────────────────────────
 let scrollProgress = 0;
 window.addEventListener('scroll', () => {
@@ -335,6 +492,16 @@ window.addEventListener('scroll', () => {
   } else {
     if (gridElement) gridElement.style.opacity = 1;
   }
+
+  // Trigger floating stats animation
+  const stats = document.querySelectorAll('.floating-stat');
+  stats.forEach((stat, idx) => {
+    if (scrollProgress > 0.4 + (idx * 0.15)) {
+      stat.classList.add('visible');
+    } else {
+      stat.classList.remove('visible');
+    }
+  });
 });
 
 // ─── Resize ───────────────────────────────────────────────────────────────────

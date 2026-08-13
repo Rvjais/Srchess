@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Testimonial carousel preview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <canvas id="webgl-board" style="display:none"></canvas>
+    <canvas id="webgl-pieces" style="display:none"></canvas>
+    <section class="section-normal" id="testimonials">
+      <div class="section-header">
+        <span class="card-tag">Reviews</span>
+        <h2>Testimonials</h2>
+        <p>Hear from our students and parents about their journey with SRCA.</p>
+      </div>
+      <div class="testimonial-carousel" data-autoplay="7000" aria-roledescription="carousel" aria-label="Student testimonials">
+        <button class="tc-arrow tc-prev" type="button" aria-label="Previous testimonial">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <div class="tc-viewport">
+          <div class="tc-track">
+            <article class="tc-slide" aria-roledescription="slide" aria-label="1 of 3">
+              <span class="tc-mark" aria-hidden="true">&ldquo;</span>
+              <div class="tc-avatar">
+                <img src="/frontend/assets/srcamain/images/Aradhya.webp" alt="Aradhya">
+              </div>
+              <p class="tc-quote">SRCA’s care and planning are amazing. My child’s confidence and chess skills have grown so much since joining the academy.</p>
+              <div class="tc-piece" aria-hidden="true">&#9819;</div>
+              <h4 class="tc-name">Aradhya</h4>
+              <span class="tc-role">Student</span>
+            </article>
+
+            <article class="tc-slide" aria-roledescription="slide" aria-label="2 of 3">
+              <span class="tc-mark" aria-hidden="true">&ldquo;</span>
+              <div class="tc-avatar">
+                <img src="/frontend/assets/srcamain/images/nanaki.webp" alt="Nanaki">
+              </div>
+              <p class="tc-quote">SRCA doesn’t just teach chess, they help with personal growth too. My child is now more focused, confident, and disciplined.</p>
+              <div class="tc-piece" aria-hidden="true">&#9822;</div>
+              <h4 class="tc-name">Nanaki</h4>
+              <span class="tc-role">Student</span>
+            </article>
+
+            <article class="tc-slide" aria-roledescription="slide" aria-label="3 of 3">
+              <span class="tc-mark" aria-hidden="true">&ldquo;</span>
+              <div class="tc-avatar">
+                <img src="/frontend/assets/srcamain/images/yumna.webp" alt="Yumna">
+              </div>
+              <p class="tc-quote">The coaches at SRCA are truly exceptional. My child not only improved in chess but also gained valuable life skills.</p>
+              <div class="tc-piece" aria-hidden="true">&#9817;</div>
+              <h4 class="tc-name">Yumna</h4>
+              <span class="tc-role">Student</span>
+            </article>
+          </div>
+          <div class="tc-progress" aria-hidden="true"><span></span></div>
+        </div>
+
+        <button class="tc-arrow tc-next" type="button" aria-label="Next testimonial">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <div class="tc-thumbs" role="tablist" aria-label="Choose a testimonial">
+          <button class="tc-thumb" type="button" role="tab" aria-label="Testimonial from Aradhya">
+            <img src="/frontend/assets/srcamain/images/Aradhya.webp" alt="" aria-hidden="true">
+          </button>
+          <button class="tc-thumb" type="button" role="tab" aria-label="Testimonial from Nanaki">
+            <img src="/frontend/assets/srcamain/images/nanaki.webp" alt="" aria-hidden="true">
+          </button>
+          <button class="tc-thumb" type="button" role="tab" aria-label="Testimonial from Yumna">
+            <img src="/frontend/assets/srcamain/images/yumna.webp" alt="" aria-hidden="true">
+          </button>
+        </div>
+      </div>
+    </section>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
+<style>.tc-viewport{box-shadow:none !important}</style>
+<style>.tc-slide:not(.is-active){opacity:.6 !important;background:red !important}</style>
