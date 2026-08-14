@@ -10,6 +10,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="./style.css">
+    <style>
+      /* Bypassing CSS cache to ensure grid and track load */
+      section#master-the-game {
+        background-color: #ffffff !important;
+        background-image: conic-gradient(rgba(212, 175, 55, 0.25) 90deg, transparent 90deg 180deg, rgba(212, 175, 55, 0.25) 180deg 270deg, transparent 270deg) !important;
+        background-size: 80px 80px !important;
+        background-repeat: repeat !important;
+      }
+      .custom-orbit-container {
+        border: 4px dashed #d4af37 !important;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.4) !important;
+      }
+    </style>
     <!-- Scopes the reveal system's hidden state. If main.js never runs, this class is
          never added and every [data-reveal] element stays plainly visible. -->
     <script>document.documentElement.classList.add('js-reveal');</script>
@@ -109,9 +122,16 @@
 
     <main id="main">
 
-    <div class="hero-content-wrapper">
+    <div class="hero-content-wrapper" style="position: relative; overflow: hidden;">
+      <!-- Hero Carousel Backgrounds -->
+      <div class="hero-carousel" id="hero-carousel">
+        <div class="hero-slide active" style="background-image: url('../scraped_site/storage/2416/Y7HcLyOHrnUIk3ifWJE8uBz6Jj1t0Cxg83eQAQq4.png');"></div>
+        <div class="hero-slide" style="background-image: url('../scraped_site/storage/2601/tHFCpaQK4hhLGRhY8wYfd10KUqYPevpyAwrslhce.jpg');"></div>
+        <div class="hero-slide" style="background-image: url('../scraped_site/storage/2569/XvTm5x72Mqehea8R8lUylFch6tErwqnIhL9Pug8J.jpg');"></div>
+      </div>
+      <div class="hero-overlay"></div>
       <!-- ── Section 1: Hero (Phase 1 — board) ────────────────────────────── -->
-      <section class="section section-hero">
+      <section class="section section-hero" style="position: relative; z-index: 2;">
         <div class="hero-content">
           <div class="hero-left glass-panel">
             <span class="eyebrow eyebrow--fill">Welcome to SRCA</span>
@@ -275,7 +295,7 @@
     <!-- ── Section 5: Services ────────────────────────────────────────────── -->
     <section class="section-normal" id="services">
       <div class="container">
-        <div class="section-head" data-reveal-group>
+        <div class="section-head services-head-card" data-reveal-group>
           <span class="eyebrow" data-reveal>Providing Since 2020</span>
           <h2 class="section-title" data-reveal>Services We <span class="accent-text">Provide</span></h2>
           <p class="section-lead" data-reveal>Everything chess, all under one roof — from expert coaching and tournament guidance to workshops and social media services.</p>
@@ -316,8 +336,12 @@
     <section class="band band--paper section-normal" id="about">
       <div class="container">
         <div class="about-split">
-          <div class="about-image" data-reveal="left">
-            <img src="/frontend/assets/srcamain/images/1.jpeg" alt="WIM Shivika Rohilla" loading="lazy" decoding="async" width="560" height="700">
+          <div class="about-image" data-reveal="left" style="position: relative; perspective: 1200px; transform-style: preserve-3d;">
+            <div class="custom-orbit-container">
+              <span class="custom-orbit-piece custom-orbit-piece-1">&#9818;</span>
+              <span class="custom-orbit-piece custom-orbit-piece-2">&#9819;</span>
+            </div>
+            <img src="/frontend/assets/srcamain/images/1.jpeg" alt="WIM Shivika Rohilla" loading="lazy" decoding="async" width="560" height="700" style="position: relative; z-index: 2; transform: translateZ(20px);">
           </div>
           <div class="about-content" data-reveal="right">
             <span class="chapter-mark"><span class="chapter-mark-glyph">&#9815;</span> 03 — The Founder</span>
@@ -403,7 +427,7 @@
     </section>
 
     <!-- ── Section 7.5: Master the Game ────────────────────────────────────────── -->
-    <section class="section-normal" id="master-the-game" style="background-color: var(--sand-100);">
+    <section class="section-normal master-game-grid" id="master-the-game">
       <div class="container">
         <div class="section-head" data-reveal-group>
           <span class="eyebrow" data-reveal>Empowering Minds Through Chess</span>
@@ -439,6 +463,16 @@
               <h3>Chess Coffee Connect</h3>
               <p>Learn, network, and enjoy chess over coffee.</p>
               <a href="https://srchessacademy.com/chess-coffee-connect" class="btn btn--primary" style="margin-top: var(--space-4); align-self: flex-start;">Know More</a>
+            </div>
+          </article>
+
+          <article class="svc svc--wide" data-reveal>
+            <img src="/frontend/assets/srcamain/images/demo.jpg" alt="Demo Online Chess Lesson" class="svc-img" loading="lazy" decoding="async" width="320" height="200" style="object-fit: cover; object-position: center;">
+            <span class="svc-index" aria-hidden="true">04</span>
+            <div class="svc-body">
+              <h3>Demo Coaching Classes</h3>
+              <p>Demo online chess lesson for beginners at SRCA.</p>
+              <a href="https://srchessacademy.com/contact" class="btn btn--primary" style="margin-top: var(--space-4); align-self: flex-start;">Enquire Now</a>
             </div>
           </article>
         </div>
@@ -573,6 +607,50 @@
                 <h4 class="tc-name">Yumna</h4>
                 <span class="tc-role">Student</span>
               </article>
+
+              <article class="tc-slide" aria-roledescription="slide" aria-label="4 of 7">
+                <span class="tc-mark" aria-hidden="true">&ldquo;</span>
+                <div class="tc-avatar">
+                  <img src="/frontend/assets/srcamain/images/Pooja-1-e1622323927868-350x350.jpg" alt="Pooja Chouhan" loading="lazy" decoding="async" width="104" height="104">
+                </div>
+                <p class="tc-quote">SRCA’s care and planning are amazing. My child’s confidence and chess skills have grown so much since joining the academy.</p>
+                <div class="tc-piece" aria-hidden="true">&#9820;</div>
+                <h4 class="tc-name">Pooja Chouhan</h4>
+                <span class="tc-role">Parent</span>
+              </article>
+
+              <article class="tc-slide" aria-roledescription="slide" aria-label="5 of 7">
+                <span class="tc-mark" aria-hidden="true">&ldquo;</span>
+                <div class="tc-avatar">
+                  <img src="/frontend/assets/srcamain/images/images_6fe22c42.jpg" alt="Reem Sheikh" loading="lazy" decoding="async" width="104" height="104">
+                </div>
+                <p class="tc-quote">SRCA doesn’t just teach chess, they help with personal growth too. My child is now more focused, confident, and disciplined.</p>
+                <div class="tc-piece" aria-hidden="true">&#9821;</div>
+                <h4 class="tc-name">Reem Sheikh</h4>
+                <span class="tc-role">Parent</span>
+              </article>
+
+              <article class="tc-slide" aria-roledescription="slide" aria-label="6 of 7">
+                <span class="tc-mark" aria-hidden="true">&ldquo;</span>
+                <div class="tc-avatar">
+                  <img src="/frontend/assets/srcamain/images/images_1d14bc4e.jpg" alt="Nikhil Verma" loading="lazy" decoding="async" width="104" height="104">
+                </div>
+                <p class="tc-quote">The coaches at SRCA are truly exceptional. My child not only improved in chess but also gained valuable life skills.</p>
+                <div class="tc-piece" aria-hidden="true">&#9823;</div>
+                <h4 class="tc-name">Nikhil Verma</h4>
+                <span class="tc-role">Parent</span>
+              </article>
+
+              <article class="tc-slide" aria-roledescription="slide" aria-label="7 of 7">
+                <span class="tc-mark" aria-hidden="true">&ldquo;</span>
+                <div class="tc-avatar">
+                  <img src="/frontend/assets/srcamain/images/Devika.png" alt="Devika Mishra" loading="lazy" decoding="async" width="104" height="104">
+                </div>
+                <p class="tc-quote">My first experience with SRCA and CCC was absolutely amazing‼️ Extremely wholesome atmosphere, enthusiastic players, it was such an enjoyable day :</p>
+                <div class="tc-piece" aria-hidden="true">&#9818;</div>
+                <h4 class="tc-name">Devika Mishra</h4>
+                <span class="tc-role">Parent</span>
+              </article>
             </div>
             <div class="tc-progress" aria-hidden="true"><span></span></div>
           </div>
@@ -590,6 +668,18 @@
             </button>
             <button class="tc-thumb" type="button" role="tab" aria-label="Testimonial from Yumna">
               <img src="/frontend/assets/srcamain/images/yumna.webp" alt="" aria-hidden="true" loading="lazy" width="52" height="52">
+            </button>
+            <button class="tc-thumb" type="button" role="tab" aria-label="Testimonial from Pooja Chouhan">
+              <img src="/frontend/assets/srcamain/images/Pooja-1-e1622323927868-350x350.jpg" alt="" aria-hidden="true" loading="lazy" width="52" height="52">
+            </button>
+            <button class="tc-thumb" type="button" role="tab" aria-label="Testimonial from Reem Sheikh">
+              <img src="/frontend/assets/srcamain/images/images_6fe22c42.jpg" alt="" aria-hidden="true" loading="lazy" width="52" height="52">
+            </button>
+            <button class="tc-thumb" type="button" role="tab" aria-label="Testimonial from Nikhil Verma">
+              <img src="/frontend/assets/srcamain/images/images_1d14bc4e.jpg" alt="" aria-hidden="true" loading="lazy" width="52" height="52">
+            </button>
+            <button class="tc-thumb" type="button" role="tab" aria-label="Testimonial from Devika Mishra">
+              <img src="/frontend/assets/srcamain/images/Devika.png" alt="" aria-hidden="true" loading="lazy" width="52" height="52">
             </button>
           </div>
         </div>
@@ -630,8 +720,12 @@
         <div class="footer-grid">
           <div class="footer-col footer-col--brand">
             <img src="/frontend/assets/srcamain/images/logo-black03.png" class="footer-logo" alt="SRCA" width="150" height="60" loading="lazy">
+            <div class="footer-partners" style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+              <img src="/frontend/assets/srcamain/images/ccc-logo-img.webp" alt="CCC Logo" height="70" style="height: 70px; width: auto;" loading="lazy">
+              <img src="/frontend/assets/srcamain/images/dcc-new-img.jpeg" alt="DCC Logo" height="100" style="height: 100px; width: auto; border-radius: 6px;" loading="lazy">
+            </div>
             <p>Join our WhatsApp community — connect with fellow chess enthusiasts in Delhi.</p>
-            <img src="/frontend/assets/srcamain/images/ccc-whatsapp-1.png" class="footer-qr" alt="WhatsApp community QR code" width="60" height="60" loading="lazy">
+            <img src="/frontend/assets/srcamain/images/ccc-whatsapp-1.png" class="footer-qr" alt="WhatsApp community QR code" width="120" height="120" style="margin-top: 1rem; border-radius: 8px;" loading="lazy">
           </div>
           <div class="footer-col">
             <h3>Quick Links</h3>
