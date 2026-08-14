@@ -593,6 +593,55 @@ if (document.readyState === 'loading') {
   initTestimonialCarousel();
 }
 
+// ─── Coach roster slider ──────────────────────────────────────────────────────
+// Native scroll-snap does the sliding; the arrows just nudge the track one card
+// at a time and grey out at either end.
+const initCoachSlider = () => {
+  const slider = document.querySelector('.coach-slider');
+  if (!slider) return;
+  const track = slider.querySelector('.coach-roster');
+  const prev = slider.querySelector('.coach-nav--prev');
+  const next = slider.querySelector('.coach-nav--next');
+  if (!track || !prev || !next) return;
+
+  const cardStep = () => {
+    const card = track.querySelector('.coach-card');
+    if (!card) return track.clientWidth;
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    return card.getBoundingClientRect().width + gap;
+  };
+  prev.addEventListener('click', () => track.scrollBy({ left: -cardStep(), behavior: 'smooth' }));
+  next.addEventListener('click', () => track.scrollBy({ left: cardStep(), behavior: 'smooth' }));
+
+  const bar = slider.querySelector('.coach-progress span');
+  const sync = () => {
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    const atStart = track.scrollLeft <= 1;
+    const atEnd = track.scrollLeft >= maxScroll - 1;
+    prev.toggleAttribute('disabled', atStart);
+    next.toggleAttribute('disabled', atEnd);
+    slider.classList.toggle('is-start', atStart);
+    slider.classList.toggle('is-end', atEnd);
+    if (bar) {
+      // Thumb width mirrors the visible fraction; translate mirrors the position
+      const frac = track.scrollWidth ? track.clientWidth / track.scrollWidth : 1;
+      bar.style.width = `${frac * 100}%`;
+      const travel = frac < 1 ? ((1 - frac) / frac) * 100 : 0;
+      const progress = maxScroll > 0 ? track.scrollLeft / maxScroll : 0;
+      bar.style.transform = `translateX(${progress * travel}%)`;
+    }
+  };
+  track.addEventListener('scroll', sync, { passive: true });
+  window.addEventListener('resize', sync);
+  sync();
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCoachSlider);
+} else {
+  initCoachSlider();
+}
+
 // ─── Phase measurement ────────────────────────────────────────────────────────
 // The King/Queen choreography used to be pinned to hardcoded multiples of
 // window.innerHeight. That desynced as soon as a section's real height differed

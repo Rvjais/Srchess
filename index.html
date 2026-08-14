@@ -18,10 +18,6 @@
         background-size: 80px 80px !important;
         background-repeat: repeat !important;
       }
-      .custom-orbit-container {
-        border: 4px dashed #d4af37 !important;
-        box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.4) !important;
-      }
     </style>
     <!-- Scopes the reveal system's hidden state. If main.js never runs, this class is
          never added and every [data-reveal] element stays plainly visible. -->
@@ -96,10 +92,6 @@
         </ul>
 
         <div class="nav-actions">
-          <a href="https://srchessacademy.com/cart" class="nav-cart" aria-label="Cart, 0 items">
-            <i class="fas fa-shopping-cart" aria-hidden="true"></i>
-            <span class="cart-count">0</span>
-          </a>
           <a href="https://srchessacademy.com/signin" class="btn btn--primary btn--sm nav-login">Login</a>
           <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
             <span class="nav-toggle-bar"></span>
@@ -336,12 +328,8 @@
     <section class="band band--paper section-normal" id="about">
       <div class="container">
         <div class="about-split">
-          <div class="about-image" data-reveal="left" style="position: relative; perspective: 1200px; transform-style: preserve-3d;">
-            <div class="custom-orbit-container">
-              <span class="custom-orbit-piece custom-orbit-piece-1">&#9818;</span>
-              <span class="custom-orbit-piece custom-orbit-piece-2">&#9819;</span>
-            </div>
-            <img src="/frontend/assets/srcamain/images/1.jpeg" alt="WIM Shivika Rohilla" loading="lazy" decoding="async" width="560" height="700" style="position: relative; z-index: 2; transform: translateZ(20px);">
+          <div class="about-image" data-reveal="left">
+            <img src="/frontend/assets/srcamain/images/1.jpeg" alt="WIM Shivika Rohilla" loading="lazy" decoding="async" width="560" height="700">
           </div>
           <div class="about-content" data-reveal="right">
             <span class="chapter-mark"><span class="chapter-mark-glyph">&#9815;</span> 03 — The Founder</span>
@@ -475,6 +463,16 @@
               <a href="https://srchessacademy.com/contact" class="btn btn--primary" style="margin-top: var(--space-4); align-self: flex-start;">Enquire Now</a>
             </div>
           </article>
+
+          <article class="svc svc--wide" data-reveal>
+            <img src="/frontend/assets/srcamain/images/Aashritta-Chaudhary.webp" alt="Psychological Counseling" class="svc-img" loading="lazy" decoding="async" width="320" height="200" style="object-fit: cover; object-position: top;">
+            <span class="svc-index" aria-hidden="true">05</span>
+            <div class="svc-body">
+              <h3>Psychological Counseling</h3>
+              <p>Build focus and resilience with 1-on-1 sessions.</p>
+              <a href="https://srchessacademy.com/counseling" class="btn btn--primary" style="margin-top: var(--space-4); align-self: flex-start;">Know More</a>
+            </div>
+          </article>
         </div>
       </div>
     </section>
@@ -483,24 +481,25 @@
     <section class="band band--navy band--seam section-normal" id="coaches">
       <div class="container">
         <div class="section-head" data-reveal-group>
+          <span class="chapter-mark" data-reveal><span class="chapter-mark-glyph">&#9812;</span> 05 — The Faculty</span>
           <span class="eyebrow" data-reveal>Mastermind Collective</span>
           <h2 class="section-title" data-reveal>Your Winning <span class="accent-text">Support Team</span></h2>
           <p class="section-lead" data-reveal>Masters of strategy, shaping champions within you — one move at a time.</p>
         </div>
 
-        <article class="coach-featured" data-reveal="scale">
-          <div class="coach-featured-img">
-            <img src="/frontend/assets/srcamain/images/tejas_bakre.jpg" alt="Tejas Bakre" loading="lazy" decoding="async" width="420" height="480">
-          </div>
-          <div class="coach-featured-body">
-            <span class="chapter-mark"><span class="chapter-mark-glyph">&#9812;</span> 05 — The Faculty</span>
-            <span class="coach-chip">Grandmaster</span>
-            <h3>Tejas Bakre</h3>
-            <p>India's grandmaster-level insight, brought directly to our students. Tejas anchors the academy's advanced programme, guiding tournament players through the openings, middlegame plans and endgame technique that decide rated games.</p>
-          </div>
-        </article>
-
-        <div class="coach-roster" data-reveal-group>
+        <div class="coach-slider">
+          <button class="tc-arrow coach-nav coach-nav--prev" type="button" aria-label="Previous coaches"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+          <button class="tc-arrow coach-nav coach-nav--next" type="button" aria-label="Next coaches"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+          <div class="coach-roster" data-reveal-group>
+          <article class="coach-card" data-reveal>
+            <div class="coach-img-wrap">
+              <img src="/frontend/assets/srcamain/images/tejas_bakre.jpg" alt="Tejas Bakre" class="coach-img" loading="lazy" decoding="async" width="320" height="300">
+            </div>
+            <div class="coach-info">
+              <h4>Tejas Bakre</h4>
+              <span>Grandmaster</span>
+            </div>
+          </article>
           <article class="coach-card" data-reveal>
             <div class="coach-img-wrap">
               <img src="/frontend/assets/srcamain/images/vishal_sareen.jpg" alt="Vishal Sareen" class="coach-img" loading="lazy" decoding="async" width="320" height="300">
@@ -555,6 +554,8 @@
               <span>Chess Coach</span>
             </div>
           </article>
+          </div>
+          <div class="coach-progress" aria-hidden="true"><span></span></div>
         </div>
       </div>
     </section>
