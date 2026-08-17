@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Sign In — SRCA</title>
+    <meta name="description" content="Sign in to SRCA to play interactive chess trivia, manage your classes and check out from the shop." />
+    <!-- @include partials/head.html -->
+  </head>
+  <body>
+    <!-- @include partials/nav.html -->
+
+    <main id="main">
+    <div class="auth-wrap">
+      <section class="auth-side">
+        <span class="eyebrow">Welcome back</span>
+        <h1>Sign in to play interactive <span class="accent-text">chess trivia</span></h1>
+        <p>One account for everything at SRCA — your classes, Chess Coffee Connect registrations, shop orders and the trivia challenge that unlocks discounts on our programs.</p>
+        <ul class="checklist">
+          <li>Solve trivia, score discounts on coaching</li>
+          <li>Track your batches and payments</li>
+          <li>Faster checkout in the SRCA shop</li>
+        </ul>
+        <span class="auth-glyph" aria-hidden="true">&#9819;</span>
+      </section>
+
+      <section class="auth-panel">
+        <div class="auth-card">
+          <form class="form form-card" data-auth-login novalidate>
+            <h2 class="form-title">Sign In</h2>
+            <p class="form-sub">Enter your contact number and we'll send you a one-time password.</p>
+            <div class="field">
+              <label for="mobile">Contact number</label>
+              <input id="mobile" name="mobile" type="tel" inputmode="numeric" placeholder="+91 98765 43210" autocomplete="tel" required>
+              <span class="field-error" data-error aria-live="polite"></span>
+            </div>
+            <label class="check"><input type="checkbox" name="remember-me" id="remember-me"> Remember me</label>
+            <div class="form-actions"><button class="btn btn--primary btn--lg" type="submit">Sign in now</button></div>
+            <p class="auth-alt">Don't have an account? <a href="/signup.html">Register</a></p>
+          </form>
+
+          <form class="form form-card" data-auth-otp hidden novalidate>
+            <button type="button" class="auth-back" data-auth-back><i class="fas fa-arrow-left" aria-hidden="true"></i> Change number</button>
+            <h2 class="form-title" style="margin-top: var(--space-3);">Enter OTP</h2>
+            <p class="form-sub">We sent a 6-digit code to <strong data-otp-target></strong>.</p>
+            <input type="hidden" name="mobile">
+            <div class="field">
+              <label for="otp">One-time password</label>
+              <input id="otp" name="otp" class="otp-input" type="text" inputmode="numeric" maxlength="6" placeholder="••••••" autocomplete="one-time-code" required>
+              <span class="field-error" data-error aria-live="polite"></span>
+            </div>
+            <div class="form-actions"><button class="btn btn--primary btn--lg" type="submit">Verify OTP</button></div>
+            <p class="auth-alt">Didn't get it? <a href="#" data-auth-back>Resend</a></p>
+          </form>
+        </div>
+      </section>
+    </div>
+    </main>
+
+    <!-- @include partials/footer.html -->
+  </body>
+</html>

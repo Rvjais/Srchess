@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Sign Up — SRCA</title>
+    <meta name="description" content="Sign up for online chess classes & coaching in India with Shivika Rohilla Chess Academy." />
+    <!-- @include partials/head.html -->
+  </head>
+  <body>
+    <!-- @include partials/nav.html -->
+
+    <main id="main">
+    <div class="auth-wrap">
+      <section class="auth-side">
+        <span class="eyebrow">Create your account</span>
+        <h1>Sign up for online chess classes &amp; <span class="accent-text">coaching</span></h1>
+        <p>Join Shivika Rohilla Chess Academy — structured levels from Freshers to Advanced, small batches, titled trainers and a community that plays offline too.</p>
+        <ul class="checklist">
+          <li>Book batches and demo classes</li>
+          <li>Register for Chess Coffee Connect events</li>
+          <li>10% scholarship for girls</li>
+        </ul>
+        <span class="auth-glyph" aria-hidden="true">&#9822;</span>
+      </section>
+
+      <section class="auth-panel">
+        <div class="auth-card">
+          <form class="form form-card" data-form action="https://srchessacademy.com/signup" method="POST">
+            <h2 class="form-title">Sign Up</h2>
+            <p class="form-sub">Takes less than a minute.</p>
+            <div class="form-grid">
+              <div class="field">
+                <label for="first-name">First name</label>
+                <input id="first-name" name="first_name" type="text" placeholder="First name" autocomplete="given-name" required>
+              </div>
+              <div class="field">
+                <label for="last-name">Last name</label>
+                <input id="last-name" name="last_name" type="text" placeholder="Last name" autocomplete="family-name" required>
+              </div>
+              <div class="field field--full">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+              </div>
+              <div class="field field--full">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" required minlength="6">
+              </div>
+              <div class="field field--full">
+                <span class="label">Gender</span>
+                <div class="radio-row">
+                  <label class="radio-pill"><input type="radio" name="gender" value="male"><span>Male</span></label>
+                  <label class="radio-pill"><input type="radio" name="gender" value="female"><span>Female</span></label>
+                  <label class="radio-pill"><input type="radio" name="gender" value="other"><span>Other</span></label>
+                </div>
+              </div>
+              <div class="field field--full">
+                <label for="mobile">Contact number</label>
+                <input id="mobile" name="mobile" type="tel" inputmode="numeric" placeholder="+91 98765 43210" autocomplete="tel" required>
+              </div>
+            </div>
+            <div class="form-actions"><button class="btn btn--primary btn--lg" type="submit">Sign up now</button></div>
+            <p class="auth-alt">Already have an account? <a href="/signin.html">Login now</a></p>
+          </form>
+        </div>
+      </section>
+    </div>
+    </main>
+
+    <!-- @include partials/footer.html -->
+  </body>
+</html>

@@ -2050,7 +2050,7 @@ img { max-width: 100%; }
 /* Decorative background patterns */
 .section-normal {
   position: relative;
-  background-image: url('../scraped_site/frontend/assets/srcamain/images/line-mini-shape2.png');
+  background-image: url('/frontend/assets/srcamain/images/line-mini-shape2.png');
   background-repeat: no-repeat;
   background-position: right bottom;
 }

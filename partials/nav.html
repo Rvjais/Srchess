@@ -1,0 +1,53 @@
+    <a href="#main" class="skip-link">Skip to content</a>
+
+    <!-- ── Navbar (shared: partials/nav.html) ─────────────────────────────── -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-inner">
+        <a href="/" class="nav-logo" aria-label="SRCA home">
+          <img src="/frontend/assets/srcamain/images/logo-black03.png" alt="SRCA Logo" width="120" height="40">
+        </a>
+
+        <ul class="nav-links" id="nav-links">
+          <li class="dropdown">
+            <button type="button" class="dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+              Academy <i class="fas fa-chevron-down nav-chevron" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-content">
+              <li><a href="/about.html">About us</a></li>
+              <li><a href="/coaches.html">Coaches</a></li>
+              <li><a href="/testimonials.html">Testimonials</a></li>
+              <li><a href="/faq.html">FAQs</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <button type="button" class="dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+              Services <i class="fas fa-chevron-down nav-chevron" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-content">
+              <li><a href="/coaching.html">Coaching</a></li>
+              <li><a href="/chess-consultation.html">Chess Consultation</a></li>
+              <li><a href="/workshops.html">Corporate &amp; School Workshops</a></li>
+              <li><a href="/social-media-management.html">Chess Climb Media</a></li>
+            </ul>
+          </li>
+          <li><a href="/chess-coffee-connect.html">Coffee Connect</a></li>
+          <li><a href="/blog.html">Blog</a></li>
+          <li><a href="/gallery.html">Gallery</a></li>
+          <li><a href="/buy_chess_merchandise.html">Shop</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <a href="/cart.html" class="nav-cart" aria-label="Cart">
+            <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+            <span class="cart-count is-empty" data-cart-count>0</span>
+          </a>
+          <a href="/signin.html" class="btn btn--primary btn--sm nav-login">Login</a>
+          <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+          </button>
+        </div>
+      </div>
+    </nav>

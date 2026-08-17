@@ -170,6 +170,15 @@ const initChapterRail = () => {
 
 initNav();
 
+// ── Cart badge (shop lives on the inner pages; keep the count in sync here) ──
+try {
+  const n = (JSON.parse(localStorage.getItem('srca-cart')) || []).reduce((s, i) => s + i.qty, 0);
+  document.querySelectorAll('[data-cart-count]').forEach((el) => {
+    el.textContent = n;
+    el.classList.toggle('is-empty', n === 0);
+  });
+} catch { /* ignore */ }
+
 // ─── Scene ───────────────────────────────────────────────────────────────────
 const canvasBoard = document.querySelector('#webgl-board');
 const canvasPieces = document.querySelector('#webgl-pieces');

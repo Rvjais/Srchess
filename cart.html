@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Your Cart — SRCA Shop</title>
+    <meta name="description" content="Your chess classes & merchandise cart at Shivika Rohilla Chess Academy." />
+    <!-- @include partials/head.html -->
+  </head>
+  <body>
+    <!-- @include partials/nav.html -->
+
+    <main id="main">
+
+    <header class="page-hero page-hero--compact">
+      <div class="page-hero-inner">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="/buy_chess_merchandise.html">Shop</a><i class="fas fa-chevron-right" aria-hidden="true"></i><span aria-current="page">Cart</span>
+        </nav>
+        <span class="eyebrow">Checkout</span>
+        <h1 class="page-title">Your chess classes &amp; <span class="accent-text">merchandise cart</span></h1>
+        <p class="page-lead">Review your items, adjust quantities, then proceed to secure checkout.</p>
+      </div>
+    </header>
+
+    <section class="section-normal" id="cart">
+      <div class="container">
+        <div class="empty-state" data-cart-empty hidden>
+          <i class="fas fa-shopping-basket" aria-hidden="true"></i>
+          <h3>Your cart is empty</h3>
+          <p>Browse chess sets, clocks, learning cards and SRCA merch — and come back here to check out.</p>
+          <a href="/buy_chess_merchandise.html" class="btn btn--primary">Go to the shop</a>
+        </div>
+
+        <div class="cart-layout">
+          <div data-cart-table>
+            <table class="cart-table">
+              <thead>
+                <tr>
+                  <th><span class="sr-only" style="position:absolute;left:-9999px;">Remove</span></th>
+                  <th></th>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody data-cart-rows></tbody>
+            </table>
+            <p class="form-note mt-4"><a href="/buy_chess_merchandise.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Continue shopping</a></p>
+          </div>
+
+          <aside class="cart-summary" data-cart-summary>
+            <h3>Cart total</h3>
+            <dl>
+              <dt>Subtotal</dt>
+              <dd data-cart-subtotal>₹0</dd>
+              <dt>Shipping</dt>
+              <dd style="font-size: 0.9rem; font-family: var(--font); font-weight: 600; color: var(--text-on-dark-body);">Free above ₹999</dd>
+            </dl>
+            <a href="https://srchessacademy.com/checkout/cart" class="btn btn--primary" target="_blank" rel="noopener">Proceed to checkout</a>
+            <p>Secure payment via Razorpay on srchessacademy.com. Sign in with your mobile number to complete the order.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="band band--paper section-normal section-tight">
+      <div class="container">
+        <div class="grid grid--3" data-reveal-group>
+          <article class="tile" data-reveal><div class="tile-icon"><i class="fas fa-shipping-fast" aria-hidden="true"></i></div><h3>Free shipping in India</h3><p>On orders above ₹999. See the <a href="/shipping_policy.html">shipping policy</a>.</p></article>
+          <article class="tile" data-reveal><div class="tile-icon"><i class="fas fa-lock" aria-hidden="true"></i></div><h3>Secure payments</h3><p>Checkout is processed on srchessacademy.com via Razorpay.</p></article>
+          <article class="tile" data-reveal><div class="tile-icon"><i class="fas fa-headset" aria-hidden="true"></i></div><h3>Need help?</h3><p><a href="https://api.whatsapp.com/send?phone=917042854007" target="_blank" rel="noopener">WhatsApp us</a> or <a href="/contact.html">send a message</a>.</p></article>
+        </div>
+      </div>
+    </section>
+
+    </main>
+
+    <!-- @include partials/footer.html -->
+  </body>
+</html>
