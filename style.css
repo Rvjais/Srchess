@@ -635,8 +635,7 @@ img { max-width: 100%; }
   font-size: 1.05rem;
   text-decoration: none;
   position: relative;
-  display: flex;
-  align-items: center;
+  display: none;
   transition: color var(--dur-fast) ease;
 }
 .nav-cart:hover { color: var(--gold-700); }
@@ -670,7 +669,8 @@ img { max-width: 100%; }
   list-style: none;
 }
 .dropdown:hover .dropdown-content,
-.dropdown:focus-within .dropdown-content {
+.dropdown:focus-within .dropdown-content,
+.dropdown .dropdown-content:hover {
   display: block;
   animation: fadeIn var(--dur-fast) ease;
 }
